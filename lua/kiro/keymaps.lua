@@ -7,6 +7,24 @@ vim.g.mapleader = ' '
 keymap("n", "<C-_>", function() require('Comment.api').toggle.linewise.current() end, n_opts)
 
 -- Normal mode
+--void paste
+vim.keymap.set("x", "<leader>p", [["_dP]])
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+
+-- tab navigation
+keymap('n', '<leader><Tab>', ':BufferLineCycleNext <CR>', n_opts)
+keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev <CR>', n_opts)
+
+-- close buffer while quitting
+keymap('n', '<leader>q', ':bd<CR>', n_opts)
+keymap('n', '<leader>wq', ':wq<CR> :bd<CR>', n_opts)
+
+-- files and stuff
+keymap('n', '<leader>ff', ':Telescope find_files<CR>', n_opts)
+keymap('n', '<leader>fg', ':Telescope live_grep<CR>', n_opts)
+keymap('n', '<leader>fb', ':Telescope buffers<CR>', n_opts)
+keymap('n', '<leader>e', ':NvimTreeToggle<CR>', n_opts)
+
 -- Move lines
 keymap('n', '<A-j>', ':m .+1<CR>==', n_opts)
 keymap('n', '<A-k>', ':m .-2<CR>==', n_opts)
@@ -21,7 +39,7 @@ keymap('n', '<leader>t', '<C-w>s <C-w>10- :term<CR>', n_opts)
 
 
 -- Visual mode
--- Move lines
+-- Move lineFoldingOnly
 keymap('v', '<A-j>', ":m '>+1<CR>gv=gv", n_opts)
 keymap('v', '<A-k>', ":m '<-2<CR>gv=gv", n_opts)
 

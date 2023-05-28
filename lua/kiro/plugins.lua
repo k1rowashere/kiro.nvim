@@ -15,12 +15,21 @@ return require('packer').startup(function(use)
         end
     }
 
+    use 'mrjones2014/nvim-ts-rainbow'
+
     use {
         'nvim-treesitter/nvim-treesitter',
-        run = function()
-            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-            ts_update()
-        end, }
+        config = function()
+            require('nvim-treesitter.configs').setup({
+                auto_install = true,
+                rainbow = {
+                    enable = true,
+                    disable = { 'NvimTree', 'packer' },
+                    extended_mode = true,
+                },
+            })
+        end
+    }
 
     use 'nvim-treesitter/nvim-treesitter-context'
 
@@ -46,6 +55,8 @@ return require('packer').startup(function(use)
             { 'rafamadriz/friendly-snippets' },
         }
     }
+
+    use 'onsails/lspkind.nvim'
 
     use {
         'folke/trouble.nvim',
@@ -113,11 +124,11 @@ return require('packer').startup(function(use)
                         glyphs = {
                             git = {
                                 unstaged = "M",
-                                staged = "✓",
+                                staged = "S",
                                 unmerged = "",
-                                renamed = "➜",
+                                renamed = "R",
                                 untracked = "A",
-                                deleted = "",
+                                deleted = "D",
                                 ignored = "",
                             },
                         }
@@ -132,21 +143,25 @@ return require('packer').startup(function(use)
                     show_on_open_dirs = true,
                 },
             }
-            require("nvim-tree.api").tree.open()
+            -- require("nvim-tree.api").tree.open()
         end
     }
 
     use {
         "windwp/nvim-autopairs",
-        config = function() require("nvim-autopairs").setup() end } -- use 'vim-airline/vim-airline' use 'vim-airline/vim-airline-themes'
+        config = function() require("nvim-autopairs").setup() end }
+    -- use 'vim-airline/vim-airline' use 'vim-airline/vim-airline-themes'
 
     use {
         'nvim-lualine/lualine.nvim',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true },
         config = function()
             require('lualine').setup {
-                options = { theme = 'gruvbox', },
-                disabled_filetypes = { statusline = { 'NvimTree_1', 'packer' } },
+                options = {
+                    theme = 'gruvbox',
+                    disabled_filetypes = {
+                        statusline = { 'NvimTree', 'packer' } },
+                },
                 sections = {
                     lualine_a = { 'mode' },
                     lualine_b = { 'branch' },
@@ -176,11 +191,14 @@ return require('packer').startup(function(use)
     --             .setup()
     --     end }
 
+
     use { 'akinsho/bufferline.nvim',
         tag = "*",
         requires = 'nvim-tree/nvim-web-devicons',
         config = function()
             require("bufferline").setup { options = {
+                mode = 'buffers',
+                separator_style = "thick",
                 hover = {
                     enabled = true,
                     delay = 100,
@@ -210,7 +228,7 @@ return require('packer').startup(function(use)
         "lewis6991/gitsigns.nvim",
         config = function()
             require('gitsigns').setup()
-            -- require("scrollbar.handlers.gitsigns").setup()
+            require("scrollbar.handlers.gitsigns").setup()
         end
     }
 
@@ -235,6 +253,7 @@ return require('packer').startup(function(use)
             require("auto-session").setup {
                 log_level = "error",
                 auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+                bypass_session_save_file_types = { 'NvimTree', 'packer' },
                 post_restore_cmds = { function()
                     require("nvim-tree.api").tree.open()
                 end },
@@ -245,7 +264,27 @@ return require('packer').startup(function(use)
         end
     }
 
-    use("github/copilot.vim")
+    -- use("github/copilot.vim")
+    use {
+        "zbirenbaum/copilot.lua",
+        -- cmd = "Copilot",
+        -- event = "InsertEnter",
+        config = function()
+            require("copilot").setup({
+                suggestion = { enabled = false },
+                panel = { enabled = false },
+            })
+        end,
+    }
+
+    use {
+        "zbirenbaum/copilot-cmp",
+        after = { "copilot.lua" },
+        config = function()
+            require("copilot_cmp").setup()
+        end
+    }
+
 
     use {
         "folke/todo-comments.nvim",
@@ -284,6 +323,66 @@ return require('packer').startup(function(use)
     })
 
     use 'Bekaboo/deadcolumn.nvim'
+
+    use {
+        'gorbit99/codewindow.nvim',
+        config = function()
+            local codewindow = require('codewindow')
+            codewindow.setup({
+                minimap_width = 10,
+                width_multiplier = 4,
+                auto_enable = false,
+                exclude_filetypes = {
+                    'NvimTree',
+                    'packer',
+                    'Trouble',
+                    'dashboard',
+                    'help'
+                },
+
+            })
+            codewindow.apply_default_keybinds()
+        end,
+    }
+
+    use {
+        "lukas-reineke/indent-blankline.nvim",
+        config = function()
+            require("indent_blankline").setup({
+                -- for example, context is off by default, use this to turn it on
+                show_current_context           = true,
+                show_current_context_start     = true,
+                -- use_treesitter             = true,
+                -- show_first_indent_level    = false,
+                show_trailing_blankline_indent = false
+            })
+        end
+    }
+
+    use({
+        "L3MON4D3/LuaSnip",
+        -- follow latest release.
+        -- tag = "v<CurrentMajor>.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+        -- install jsregexp (optional!:).
+        run = "make install_jsregexp"
+    })
+
+    -- use({
+    --     'karb94/neoscroll.nvim',
+    --     config = function()
+    --         require('neoscroll').setup()
+    --     end
+    -- })
+
+    -- use { 'gen740/SmoothCursor.nvim',
+    --     config = function()
+    --         require('smoothcursor').setup()
+    --     end
+    -- }
+
+
+
+
 
     -- use {
     --     'glepnir/dashboard-nvim',
