@@ -2,12 +2,6 @@ local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
 
-lsp.ensure_installed({
-    --'sumneko-lua',
-    --'tsserver',
-    'rust_analyzer',
-})
-
 -- Fix Undefined global 'vim'
 lsp.nvim_workspace()
 
@@ -47,18 +41,19 @@ local cmp_mappings = {
             fallback()
         end
     end, { "i", "s" }),
+    ["<C-Space>"] = cmp.mapping.complete(),
 }
 
-
-lsp.setup_nvim_cmp({
+cmp.setup({
     enabled = function()
         local in_prompt = vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt'
         -- this will disable cmp in the Telescope window
         if in_prompt then
             return false
         end
-        local context = require("cmp.config.context")
-        return not (context.in_treesitter_capture("comment") == true or context.in_syntax_group("Comment"))
+        -- local context = require("cmp.config.context")
+        -- return not (context.in_treesitter_capture("comment") or context.in_syntax_group("Comment"))
+        return true
     end,
     mapping = cmp_mappings,
     sources = {
@@ -78,7 +73,7 @@ lsp.setup_nvim_cmp({
     sorting = {
         priority_weight = 2,
         comparators = {
-            -- require("copilot_cmp.comparators").prioritize,
+            require("copilot_cmp.comparators").prioritize,
 
             -- Below is the default comparitor list and order for nvim-cmp
             cmp.config.compare.offset,
@@ -93,16 +88,16 @@ lsp.setup_nvim_cmp({
             cmp.config.compare.order,
         },
     },
+    experimental = {
+        ghost_text = true,
+    },
 })
 
-
 lsp.set_preferences({
-    suggest_lsp_servers = false,
+    suggest_lsp_servers = true,
     sign_icons = {
         error = 'E',
         warn = 'W',
-        hint = 'H',
-        info = 'I'
     }
 })
 

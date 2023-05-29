@@ -11,19 +11,15 @@ keymap("n", "<C-_>", function() require('Comment.api').toggle.linewise.current()
 vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
+
 -- tab navigation
 keymap('n', '<leader><Tab>', ':BufferLineCycleNext <CR>', n_opts)
 keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev <CR>', n_opts)
 
 -- close buffer while quitting
-keymap('n', '<leader>q', ':bd<CR>', n_opts)
-keymap('n', '<leader>wq', ':wq<CR> :bd<CR>', n_opts)
+keymap('n', '<leader>q', ':bd<CR> :bp<CR>', n_opts)
+keymap('n', '<leader>wq', ':w<CR> :bd<CR> :BufferLinePick <CR>', n_opts)
 
--- files and stuff
-keymap('n', '<leader>ff', ':Telescope find_files<CR>', n_opts)
-keymap('n', '<leader>fg', ':Telescope live_grep<CR>', n_opts)
-keymap('n', '<leader>fb', ':Telescope buffers<CR>', n_opts)
-keymap('n', '<leader>e', ':NvimTreeToggle<CR>', n_opts)
 
 -- Move lines
 keymap('n', '<A-j>', ':m .+1<CR>==', n_opts)
