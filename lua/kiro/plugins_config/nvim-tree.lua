@@ -15,8 +15,8 @@ require("nvim-tree").setup {
                 col = 1,
             },
         },
-        signcolumn = "no",
-        width = 30,
+        -- signcolumn = "no",
+        width = 35,
         side = 'left',
     },
     renderer = {

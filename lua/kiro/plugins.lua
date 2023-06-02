@@ -21,38 +21,6 @@ return require('packer').startup(function(use)
     --     vim.api.nvim_create_user_command('BaleiaColorize', baleia, {})
     -- end }
 
-    use { 'luisiacc/gruvbox-baby',
-        branch = 'main',
-        config = function()
-            vim.g.gruvbox_baby_background_color = 'dark'
-            vim.g.gruvbox_baby_telescope_theme  = 1
-            -- vim.g.gruvbox_baby_transparent_mode = 0
-            vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
-            vim.cmd('colorscheme gruvbox-baby')
-        end
-    }
-
-    use { 'xiyaowong/transparent.nvim',
-        -- disable = true,
-        cmd = { 'TransparentEnable', 'TransparentDisable', 'TransparentToggle' },
-        config = function()
-            require("transparent").setup({
-                groups = {
-                    'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
-                    'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
-                    'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
-                    'SignColumn', 'CursorLineNr', 'EndOfBuffer',
-                },
-                extra_groups = {
-                    'NormalFloat',
-                    'NvimTreeNormal',
-                    'barbecue_normal'
-                },
-                exclude_groups = {},
-            })
-        end
-    }
-
     use { 'nvim-telescope/telescope.nvim',
         requires = 'nvim-lua/plenary.nvim',
         config = function()
@@ -107,6 +75,7 @@ return require('packer').startup(function(use)
             { 'williamboman/mason-lspconfig.nvim' },
 
             -- Autocompletion
+            { 'onsails/lspkind.nvim' },
             { 'hrsh7th/nvim-cmp' },
             { 'hrsh7th/cmp-buffer' },
             { 'hrsh7th/cmp-path' },
@@ -123,8 +92,12 @@ return require('packer').startup(function(use)
         end,
     }
 
-
-    use 'onsails/lspkind.nvim'
+    use { "https://git.sr.ht/~nedia/auto-format.nvim",
+        event = 'BufWinEnter',
+        config = function()
+            require("auto-format").setup()
+        end
+    }
 
     use { 'folke/trouble.nvim',
         requires = 'nvim-tree/nvim-web-devicons'
@@ -159,7 +132,7 @@ return require('packer').startup(function(use)
         end
     }
 
-    -- use { 'gennaro-tedesco/nvim-peekup', keys = '""' }
+    use { 'gennaro-tedesco/nvim-peekup', keys = '""' }
 
     use { 'nvim-tree/nvim-tree.lua',
         requires = {
@@ -188,6 +161,7 @@ return require('packer').startup(function(use)
     }
 
     use { 'akinsho/bufferline.nvim',
+        after = 'rose-pine',
         tag = '*',
         requires = 'nvim-tree/nvim-web-devicons',
         config = function()
@@ -197,7 +171,12 @@ return require('packer').startup(function(use)
 
     use { 'petertriho/nvim-scrollbar',
         config = function()
-            require('scrollbar').setup()
+            require('scrollbar').setup({
+                handlers = {
+                    gitsigns = true,
+                    search = true,
+                },
+            })
         end
     }
 
@@ -241,11 +220,7 @@ return require('packer').startup(function(use)
         config = function()
             vim.o.timeout = true
             vim.o.timeoutlen = 300
-            require('which-key').setup {
-                -- your configuration comes here
-                -- or leave it empty to use the default settings
-                -- refer to the configuration section below
-            }
+            require('which-key').setup {}
         end
     }
 
@@ -287,6 +262,51 @@ return require('packer').startup(function(use)
             require('kiro.plugins_config.dashboard')
         end
     }
+
+    -- use { 'folke/tokyonight.nvim' }
+    -- use { 'luisiacc/gruvbox-baby' }
+    use { 'rose-pine/neovim', as = 'rose-pine',
+        branch = 'main',
+        config = function()
+            -- vim.g.gruvbox_baby_background_color = 'dark'
+            -- vim.g.gruvbox_baby_telescope_theme  = 1
+            -- vim.g.gruvbox_baby_transparent_mode = 0
+            vim.cmd [[set termguicolors]]
+            vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
+            require('rose-pine').setup({
+                highlight_groups = {
+                    ColorColumn = { bg = 'rose' },
+
+                    -- Blend colours against the "base" background
+                    CursorLine = { bg = 'foam', blend = 10 },
+                    StatusLine = { fg = 'love', bg = 'love', blend = 10 },
+                }
+            })
+            -- vim.cmd('colorscheme gruvbox-baby')
+            -- vim.cmd('colorscheme tokyonight-night')
+            vim.cmd('colorscheme rose-pine')
+        end
+    }
+
+    use { 'xiyaowong/transparent.nvim',
+        config = function()
+            require("transparent").setup({
+                groups = {
+                    'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
+                    'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
+                    'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
+                    'SignColumn', 'CursorLineNr', 'EndOfBuffer',
+                },
+                extra_groups = {
+                    'NormalFloat',
+                    'NvimTreeNormal',
+                    'barbecue_normal'
+                },
+                exclude_groups = {},
+            })
+        end
+    }
+
 
     if packer_bootstrap then
         require('packer').sync()

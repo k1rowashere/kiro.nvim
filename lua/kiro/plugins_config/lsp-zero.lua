@@ -21,8 +21,6 @@ local cmp_mappings = {
     ["<Tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
             cmp.select_next_item()
-            -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-            -- they way you will only jump inside the snippet region
         elseif luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
         elseif has_words_before() then
@@ -43,6 +41,54 @@ local cmp_mappings = {
     end, { "i", "s" }),
     ["<C-Space>"] = cmp.mapping.complete(),
 }
+
+
+lsp.set_preferences({
+    suggest_lsp_servers = true,
+    sign_icons = {
+        Error = "\u{ea87} ",
+        Warn = "\u{ea6c} ",
+        Hint = "󰮦 ",
+        Info = "\u{ea74} "
+    },
+})
+
+lsp.extend_lspconfig({
+    capabilities = {
+        textDocument = {
+            foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+        }
+    }
+})
+
+lsp.on_attach(function(client, bufnr)
+    local function opts(desc)
+        return { buffer = bufnr, remap = false, desc = desc or '' }
+    end
+    -- Error = , Warn =  , Hint = 󰮦, Info = 
+    local signs = { Error = "\u{ea87} ", Warn = "\u{ea6c} ", Hint = "󰮦 ", Info = "\u{ea74} " }
+    for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+    end
+
+    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts('Goto Definition'))
+    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts())
+    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts())
+    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts('View diagnostic'))
+    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts('Goto Next diagnostic'))
+    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts('Goto Previous diagnostic'))
+    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts('Code Action'))
+    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts('References'))
+    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts('Rename Symbol'))
+    -- vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts('Signature'))
+    -- vim.api.nvim_create_autocmd('BufWritePre', { command = 'LspZeroFormat' })
+end)
+
+lsp.setup()
 
 cmp.setup({
     enabled = function()
@@ -88,46 +134,10 @@ cmp.setup({
             cmp.config.compare.order,
         },
     },
-    experimental = {
-        ghost_text = true,
-    },
+    -- experimental = {
+    --     ghost_text = true,
+    -- },
 })
-
-lsp.set_preferences({
-    suggest_lsp_servers = true,
-    sign_icons = {
-        Error = "\u{ea87} ",
-        Warn = "\u{ea6c} ",
-        Hint = "󰮦 ",
-        Info = "\u{ea74} "
-    },
-})
-
-lsp.on_attach(function(client, bufnr)
-    local function opts(desc)
-        return { buffer = bufnr, remap = false, desc = desc or '' }
-    end
-    -- Error = , Warn =  , Hint = 󰮦, Info = 
-    local signs = { Error = "\u{ea87} ", Warn = "\u{ea6c} ", Hint = "󰮦 ", Info = "\u{ea74} " }
-    for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-    end
-
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts('Goto Definition'))
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts())
-    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts())
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts('View diagnostic'))
-    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts('Goto Next diagnostic'))
-    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts('Goto Previous diagnostic'))
-    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts('Code Action'))
-    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts('References'))
-    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts('Rename Symbol'))
-    -- vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts('Signature'))
-    vim.api.nvim_create_autocmd('BufWritePre', { command = 'LspZeroFormat' })
-end)
-
-lsp.setup()
 
 vim.diagnostic.config({
     virtual_text = true

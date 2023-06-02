@@ -1,7 +1,9 @@
+vim.cmd [[set termguicolors]]
+
 require('bufferline').setup {
     options = {
         mode = 'buffers',
-        separator_style = 'thick',
+        separator_style = 'slope',
         hover = {
             enabled = true,
             delay = 100,

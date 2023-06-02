@@ -4,7 +4,7 @@ local t_opts = { silent = true }
 local keymap = vim.keymap.set
 
 vim.g.mapleader = ' '
-keymap("n", "<C-_>", function() require('Comment.api').toggle.linewise.current() end, n_opts)
+keymap({ 'n', 'v' }, "<C-_>", '<Plug>(comment_toggle_linewise)', n_opts)
 
 -- Word kill
 keymap('i', '<C-BS>', '<C-w>')
@@ -74,7 +74,7 @@ keymap('v', '<A-k>', ":m '<-2<CR>gv=gv", n_opts)
 
 -- Visual selection
 local surround_map = function(char)
-    keymap('x', char, '<Plug>(nvim-surround-visual)' .. char .. ')', n_opts)
+    keymap('v', '<leader>' .. char, '<Plug>(nvim-surround-visual)' .. char .. ')', n_opts)
 end
 
 for _, char in ipairs({ '(', '[', '{', '<', '"', "'" }) do
