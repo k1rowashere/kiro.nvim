@@ -1,5 +1,7 @@
 require("nvim-tree").setup {
+    disable_netrw = true,
     hijack_unnamed_buffer_when_opening = true,
+    sync_root_with_cwd = true,
     view = {
         float = {
             enable = false,
@@ -14,7 +16,7 @@ require("nvim-tree").setup {
             },
         },
         signcolumn = "no",
-        width = 25,
+        width = 30,
         side = 'left',
     },
     renderer = {
@@ -23,19 +25,28 @@ require("nvim-tree").setup {
         },
         highlight_git = true,
         icons = {
-            git_placement = "after",
+            -- git_placement = "after",
             glyphs = {
                 git = {
-                    unstaged = "M",
-                    staged = "S",
+                    staged = "",
+                    unstaged = "",
                     unmerged = "",
-                    renamed = "R",
-                    untracked = "A",
-                    deleted = "D",
-                    ignored = "",
-                },
+                    ignored = "",
+                    untracked = "",
+                    deleted = "",
+                    renamed = "",
+                }
             }
-        }
+        },
+    },
+    diagnostics = {
+        enable = true,
+        icons = {
+            hint = "",
+            info = "",
+            warning = "",
+            error = "",
+        },
     },
     update_focused_file = {
         enable = true,
@@ -47,5 +58,16 @@ require("nvim-tree").setup {
     },
     git = {
         show_on_dirs = true,
+    },
+    filters = {
+        custom = { '^\\.git$' },
+    },
+    actions = {
+        open_file = {
+            quit_on_open = true,
+        },
+        remove_file = {
+            close_window = false,
+        },
     }
 }

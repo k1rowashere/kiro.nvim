@@ -6,11 +6,44 @@ local keymap = vim.keymap.set
 vim.g.mapleader = ' '
 keymap("n", "<C-_>", function() require('Comment.api').toggle.linewise.current() end, n_opts)
 
--- Normal mode
---void paste
-vim.keymap.set("x", "<leader>p", [["_dP]])
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+-- Word kill
+keymap('i', '<C-BS>', '<C-w>')
+keymap('i', '<M-BS>', '<C-w>')
+keymap('i', '<C-Del>', '<esc>dei', n_opts)
 
+-- Shift Select
+keymap('n', '<S-Up>', 'v<Up>', n_opts)
+keymap('n', '<S-Down>', 'v<Down>', n_opts)
+keymap('n', '<S-Left>', 'v<Left>', n_opts)
+keymap('n', '<S-Right>', 'v<Right>', n_opts)
+keymap('v', '<S-Up>', '<Up>', n_opts)
+keymap('v', '<S-Down>', '<Down>', n_opts)
+keymap('v', '<S-Left>', '<Left>', n_opts)
+keymap('v', '<S-Right>', '<Right>', n_opts)
+keymap('i', '<S-Up>', '<Esc>v<Up>', n_opts)
+keymap('i', '<S-Down>', '<Esc>v<Down>', n_opts)
+keymap('i', '<S-Left>', '<Esc>v<Left>', n_opts)
+keymap('i', '<S-Right>', '<Esc>v<Right>', n_opts)
+
+keymap('n', '<C-S-Up>', 'v<Up>', n_opts)
+keymap('n', '<C-S-Down>', 'v<Down>', n_opts)
+keymap('n', '<C-S-Left>', 'v<C-Left>', n_opts)
+keymap('n', '<C-S-Right>', 'v<C-Right>', n_opts)
+keymap('v', '<C-S-Up>', '<Up>', n_opts)
+keymap('v', '<C-S-Down>', '<Down>', n_opts)
+keymap('v', '<C-S-Left>', '<Left>', n_opts)
+keymap('v', '<C-S-Right>', '<Right>', n_opts)
+keymap('i', '<C-S-Up>', '<Esc>v<Up>', n_opts)
+keymap('i', '<C-S-Down>', '<Esc>v<Down>', n_opts)
+keymap('i', '<C-S-Left>', '<Esc>v<C-Left>', n_opts)
+keymap('i', '<C-S-Right>', '<Esc>v<C-Right>', n_opts)
+
+-- Normal mode
+keymap('n', '<esc>', ':noh<CR>', n_opts)
+
+--void paste
+keymap("x", "<leader>p", [["_dP]])
+keymap({ "n", "v" }, "<leader>d", [["_d]])
 
 -- tab navigation
 keymap('n', '<leader><Tab>', ':BufferLineCycleNext <CR>', n_opts)
@@ -35,9 +68,18 @@ keymap('n', '<leader>t', '<C-w>s <C-w>10- :term<CR>', n_opts)
 
 
 -- Visual mode
--- Move lineFoldingOnly
+-- Move lines
 keymap('v', '<A-j>', ":m '>+1<CR>gv=gv", n_opts)
 keymap('v', '<A-k>', ":m '<-2<CR>gv=gv", n_opts)
+
+-- Visual selection
+local surround_map = function(char)
+    keymap('x', char, '<Plug>(nvim-surround-visual)' .. char .. ')', n_opts)
+end
+
+for _, char in ipairs({ '(', '[', '{', '<', '"', "'" }) do
+    surround_map(char)
+end
 
 -- Terminal mode
 keymap('t', '<esc>', '<C-\\><C-N>', t_opts)
