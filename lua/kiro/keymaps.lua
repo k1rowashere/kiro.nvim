@@ -1,10 +1,51 @@
 local n_opts = { silent = true, noremap = true }
 local t_opts = { silent = true }
-
 local keymap = vim.keymap.set
 
+-- TODO: move to plugin (should work with any language)
+local function header_comment(str, line_len)
+    -- remove trailing and leading whitespace
+    str = str:gsub('^%s*(.-)%s*$', '%1')
+    local dash_count = (line_len - string.len(str) - 2) / 2
+    if string.len(str) % 2 == 1 then
+        str = str .. ' '
+    end
+
+    return string.rep('-', dash_count) ..
+        ' ' .. str .. ' '
+        .. string.rep('-', dash_count)
+end
+
+function replace_with_header()
+    local line = vim.api.nvim_get_current_line()
+    local indent = line:match('^%s+') or ''
+    local match = line:match('^%s*%-%-([^%-].+)%-%-$')
+    if match then
+        vim.api.nvim_set_current_line(indent ..
+            header_comment(match, 80 - string.len(indent)))
+    end
+end
+
+vim.cmd [[
+    augroup CommentHeader
+        autocmd!
+        autocmd TextChanged,TextChangedI * lua replace_with_header()
+        augroup END
+]]
+
+
+-- auto command to replace '-- str --' with header comment
+-- vim.cmd [[
+--     augroup CommentHeader
+--         autocmd!
+--         autocmd InsertLeave * lua replace_with_header()
+--         augroup END
+-- ]]
+
 vim.g.mapleader = ' '
-keymap({ 'n', 'v' }, "<C-_>", '<Plug>(comment_toggle_linewise)', n_opts)
+
+keymap('v', "<C-_>", '<Plug>(comment_toggle_linewise_visual)', n_opts)
+keymap('n', "<C-_>", '<Plug>(comment_toggle_linewise_current)', n_opts)
 
 -- Word kill
 keymap('i', '<C-BS>', '<C-w>')
@@ -46,12 +87,19 @@ keymap("x", "<leader>p", [["_dP]])
 keymap({ "n", "v" }, "<leader>d", [["_d]])
 
 -- tab navigation
-keymap('n', '<leader><Tab>', ':BufferLineCycleNext <CR>', n_opts)
-keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev <CR>', n_opts)
+keymap('n', '<leader><Tab>', ':BufferLineCycleNext<CR>', n_opts)
+keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev ', n_opts)
+for i = 1, 9, 1 do
+    keymap(
+        'n', '<leader><leader>' .. i,
+        ':BufferLineGoToBuffer ' .. i .. '<CR>',
+        { silent = true, desc = "Goto buffer " .. i }
+    )
+end
 
--- close buffer while quitting
-keymap('n', '<leader>q', ':bd<CR> :bp<CR>', n_opts)
-keymap('n', '<leader>wq', ':w<CR> :bd<CR> :BufferLinePick <CR>', n_opts)
+-- close buffer
+keymap('n', '<leader>q', ':bd<CR>', n_opts)
+keymap('n', '<leader>wq', ':w<CR> :bd<CR>', n_opts)
 
 
 -- Move lines
@@ -63,8 +111,10 @@ keymap('n', '<A-Left>', '<C-w>h', n_opts)
 keymap('n', '<A-Down>', '<C-w>j', n_opts)
 keymap('n', '<A-Up>', '<C-w>k', n_opts)
 keymap('n', '<A-Right>', '<C-w>l', n_opts)
--- toggle terminal
+
 keymap('n', '<leader>t', '<C-w>s <C-w>10- :term<CR>', n_opts)
+keymap('n', '<leader>e', ':NvimTreeToggle<CR>', n_opts)
+keymap('n', '<leader>u', ':UndotreeToggle<CR>', n_opts)
 
 
 -- Visual mode
