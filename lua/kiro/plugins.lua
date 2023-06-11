@@ -1,8 +1,16 @@
 local ensure_packer = function()
     local fn = vim.fn
-    local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+    local install_path = fn.stdpath('data') ..
+        '/site/pack/packer/start/packer.nvim'
     if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+        fn.system({
+            'git',
+            'clone',
+            '--depth',
+            '1',
+            'https://github.com/wbthomason/packer.nvim',
+            install_path
+        })
         vim.cmd [[packadd packer.nvim]]
         return true
     end
@@ -15,27 +23,74 @@ end
 
 local packer_bootstrap = ensure_packer()
 
-return require('packer').startup(function(use)
+local packer_plug = function(use)
     use 'wbthomason/packer.nvim'
 
     use { 'nvim-telescope/telescope.nvim',
         requires = 'nvim-lua/plenary.nvim',
-        keys = '<leader>f',
-        cmd = { 'Telescope' },
-        config = load_config('telescope'),
+        module = 'telescope',
+        config = function() require('kiro.plugins_config.telescope') end,
     }
 
-    use { "beauwilliams/focus.nvim",
+    use { 'beauwilliams/focus.nvim',
+        event = 'WinEnter',
         config = function()
-            require("focus").setup({
-                height = 50,
-                minheight = 1,
+            require('focus').setup({
+                height = 30,
+                quickfixheight = 10,
+                excluded_filetypes = { 'fterm', 'term', 'toggleterm' },
                 compatible_filetrees = { 'nvimtree' },
             })
         end
     }
 
+    ----------------------------------- Git  -----------------------------------
+
     use 'tpope/vim-fugitive'
+
+    use { 'lewis6991/gitsigns.nvim',
+        config = function()
+            require('kiro.plugins_config.gitsigns')
+            require('scrollbar.handlers.gitsigns').setup()
+        end
+    }
+
+    ---------------------------------- Utils  ----------------------------------
+
+    use { 'Bekaboo/deadcolumn.nvim',
+        event = 'InsertEnter',
+        config = function()
+            vim.opt.colorcolumn = '81'
+        end
+    }
+
+    use { 'saifulapm/chartoggle.nvim',
+        keys = { 'g,', 'g;' },
+        config = function()
+            require('chartoggle').setup({
+                leader = 'g',
+                keys = { ',', ';' },
+            })
+        end
+    }
+
+    use 'mg979/vim-visual-multi'
+
+    use { 'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup()
+        end
+    }
+
+    use { 'kylechui/nvim-surround',
+        keys = { 'c', 'd', 'y' },
+        tag = '*',
+        config = function() require('nvim-surround').setup() end
+    }
+
+    use { 'windwp/nvim-autopairs',
+        config = function() require('nvim-autopairs').setup() end
+    }
 
     ------------------------------ Syntax and LSP ------------------------------
 
@@ -44,20 +99,12 @@ return require('packer').startup(function(use)
     }
 
     use 'nvim-treesitter/nvim-treesitter-context'
+
     use 'mrjones2014/nvim-ts-rainbow'
 
     use { 'lukas-reineke/indent-blankline.nvim',
         config = function()
-            require('indent_blankline').setup({
-                show_current_context           = true,
-                show_current_context_start     = true,
-                show_trailing_blankline_indent = false
-
-            })
-            vim.g.indent_blankline_char = '▏'
-            -- vim.g.indent_blankline_char_list = { '|', '¦', '┆', '┊' }
-            vim.g.indent_blankline_filetype_exclude = vim.g.non_file_buffers
-            vim.g.indent_blankline_use_treesitter = true
+            require('kiro.plugins_config.indent')
         end
     }
 
@@ -77,9 +124,11 @@ return require('packer').startup(function(use)
         end
     }
 
+    use 'onsails/lspkind.nvim'
+
     use { 'VonHeikemen/lsp-zero.nvim',
         branch = 'v2.x',
-        after = 'copilot-cmp',
+        after = { 'copilot-cmp', 'lspkind.nvim' },
         requires = {
             -- LSP Support
             { 'neovim/nvim-lspconfig' },
@@ -104,47 +153,53 @@ return require('packer').startup(function(use)
         end,
     }
 
+    ------------------------ debugging and diagnositcs  ------------------------
+    use { 'mfussenegger/nvim-dap', config = load_config('nvim-dap') }
+
+    use { 'rcarriga/nvim-dap-ui',
+        requires = { 'mfussenegger/nvim-dap' },
+        keys = '<leader>db',
+        module = 'dapui',
+        config = function()
+            require('dapui').setup()
+        end,
+    }
+
     use { 'folke/trouble.nvim',
+        module = 'trouble',
         requires = 'nvim-tree/nvim-web-devicons'
     }
 
-    use { 'numToStr/Comment.nvim',
+    use { 'folke/todo-comments.nvim',
+        requires = 'nvim-lua/plenary.nvim',
         config = function()
-            require('Comment').setup()
+            require('todo-comments').setup {}
         end
     }
 
-    use { 'kylechui/nvim-surround',
-        event = 'InsertEnter',
-        tag = '*',
-        config = function() require('nvim-surround').setup() end
-    }
+    use { 'folke/which-key.nvim', config = load_config('which-key') }
 
-    use { 'gennaro-tedesco/nvim-peekup', keys = '""' }
-
-    use { 'nvim-tree/nvim-tree.lua',
-        cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeClose' },
-        requires = {
-            'nvim-tree/nvim-web-devicons',
-        },
-        config = load_config('nvim-tree'),
-    }
-
-    use { 'windwp/nvim-autopairs',
-        config = function() require('nvim-autopairs').setup() end
-    }
+    ------------------------------------ -- ------------------------------------
 
     ------------------------------------ UI ------------------------------------
 
+    use { 'akinsho/toggleterm.nvim',
+        keys = '<leader>t',
+        config = function() require('kiro.plugins_config.toggleterm') end
+    }
+
     use { 'kevinhwang91/nvim-ufo',
         requires = 'kevinhwang91/promise-async',
-        config = load_config('nvim-ufo'),
+        -- config = load_config('nvim-ufo'),
+        config = function()
+            require('kiro.plugins_config.nvim-ufo')
+        end
     }
 
     use { 'nvim-lualine/lualine.nvim',
         event = 'ColorScheme',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-        config = load_config('lualine'),
+        config = function() require('kiro.plugins_config.lualine') end
     }
 
     use { "luukvbaal/statuscol.nvim",
@@ -152,7 +207,6 @@ return require('packer').startup(function(use)
     }
 
     use { 'akinsho/bufferline.nvim',
-        after = 'rose-pine',
         tag = '*',
         requires = 'nvim-tree/nvim-web-devicons',
         config = load_config('bufferline'),
@@ -160,19 +214,12 @@ return require('packer').startup(function(use)
 
     use { 'petertriho/nvim-scrollbar',
         config = function()
-            require('scrollbar').setup({
+            require('scrollbar/init').setup({
                 handlers = {
                     gitsigns = true,
                     search = true,
                 },
             })
-        end
-    }
-
-    use { 'lewis6991/gitsigns.nvim',
-        config = function()
-            require('kiro.plugins_config.gitsigns')
-            require('scrollbar.handlers.gitsigns').setup()
         end
     }
 
@@ -185,41 +232,20 @@ return require('packer').startup(function(use)
 
     use { 'rmagatti/auto-session',
         config = function()
-            require('auto-session').setup {
-                log_level = 'error',
-                auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-                bypass_session_save_file_types = vim.g.non_file_buffers,
-                cwd_change_handling = {
-                    restore_upcoming_session = true,
-                },
-                -- post_restore_cmds = { require('nvim-tree.api').tree.open },
-                -- pre_save_cmds = { require('nvim-tree.api').tree.close },
-            }
-            -- using config causes a crash if nvim-tree is lazy loaded
-            vim.g.auto_session_pre_save_cmds = { 'NvimTreeClose' }
+            require('kiro.plugins_config.auto-session')
         end
     }
 
-    use { 'folke/todo-comments.nvim',
-        requires = 'nvim-lua/plenary.nvim',
-        config = function()
-            require('todo-comments').setup {}
-        end
+    use { 'nvim-tree/nvim-tree.lua',
+        module = { 'nvim-tree.api' },
+        requires = { 'nvim-tree/nvim-web-devicons' },
+        config = load_config('nvim-tree'),
     }
 
-    use { 'folke/which-key.nvim',
-        config = function()
-            vim.o.timeout = true
-            vim.o.timeoutlen = 300
-            require('which-key').setup {}
-        end
-    }
-
-    use { 'mbbill/undotree',
-        cmd = { 'UndotreeOpen', 'UndotreeToggle' }
-    }
+    use { 'mbbill/undotree', cmd = { 'UndotreeOpen', 'UndotreeToggle' } }
 
     use { 'utilyre/barbecue.nvim',
+        event = 'ColorScheme',
         tag = '*',
         requires = {
             'SmiteshP/nvim-navic',
@@ -231,23 +257,22 @@ return require('packer').startup(function(use)
         end,
     }
 
-    use 'Bekaboo/deadcolumn.nvim'
-
     use { 'glepnir/dashboard-nvim',
-        requires = { 'nvim-tree/nvim-web-devicons', 'm00qek/baleia.nvim' },
-        config = load_config('dashboard'),
+        requires = {
+            'nvim-tree/nvim-web-devicons',
+            'rmagatti/auto-session'
+        },
+        -- config = load_config('dashboard'),
+        config = function()
+            require('kiro.plugins_config.dashboard')
+        end,
     }
 
-    -- use { 'folke/tokyonight.nvim' }
-    -- use { 'luisiacc/gruvbox-baby' }
+    ---------------------------------- Theme  ----------------------------------
+
     use { 'rose-pine/neovim', as = 'rose-pine',
-        branch = 'main',
         config = function()
-            -- vim.g.gruvbox_baby_background_color = 'dark'
-            -- vim.g.gruvbox_baby_telescope_theme  = 1
-            -- vim.g.gruvbox_baby_transparent_mode = 0
             vim.cmd [[set termguicolors]]
-            vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
             require('rose-pine').setup({
                 highlight_groups = {
                     ColorColumn = { bg = 'rose' },
@@ -258,30 +283,40 @@ return require('packer').startup(function(use)
         end
     }
 
-    use { 'xiyaowong/transparent.nvim', config = load_config('transparent') }
+    use { 'xiyaowong/transparent.nvim',
+        config = require('kiro.plugins_config.transparent')
+    }
 
-    ----------------------------- Domain Specific  -----------------------------
+    --------------------------- Domain Specific  ---------------------------
 
     use { 'norcalli/nvim-colorizer.lua',
         ft = { 'css', 'javascript', 'html' },
+        cmd = { 'ColorizerToggle', 'ColorizerAttachToBuffer' },
         config = function()
             require('colorizer').setup({
-                'css',
-                'javascript',
+                'scss',
                 'html',
-            }, { mode = 'forground' })
+                css = { rgb_fn = true, },
+                javascript = { no_names = true }
+            })
         end
     }
 
-    use { 'toppair/peek.nvim', run = 'deno task --quiet build:fast',
-        ft = { 'md' },
+    use { 'toppair/peek.nvim',
+        run = 'deno task --quiet build:fast',
+        ft = { 'markdown' },
         config = function()
             require('peek').setup()
         end
     }
 
+    use { 'folke/neodev.nvim',
+        ft = { 'lua' },
+        config = function() require('neodev').setup() end
+    }
 
-    ----------------------------- Usless crap (TM) -----------------------------
+
+    --------------------------- Usless crap (TM) ---------------------------
 
     use { 'eandrju/cellular-automaton.nvim', cmd = 'CellularAutomaton' }
 
@@ -289,4 +324,13 @@ return require('packer').startup(function(use)
     if packer_bootstrap then
         require('packer').sync()
     end
-end)
+end
+
+return require('packer').startup({
+    packer_plug,
+    config = {
+        display = {
+            open_fn = require('packer.util').float,
+        }
+    }
+})

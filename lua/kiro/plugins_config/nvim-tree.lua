@@ -31,13 +31,19 @@ return function()
                 error = "",
             },
         },
-        update_focused_file = { enable = true, },
+        update_focused_file = {
+            enable = true,
+            update_root = false
+        },
         modified = {
             enable = true,
             show_on_dirs = true,
             show_on_open_dirs = true,
         },
-        git = { show_on_dirs = true, },
+        git = {
+            enable = true,
+            show_on_dirs = true,
+        },
         filters = { custom = { '^\\.git$' }, },
         actions = {
             open_file = { quit_on_open = true, },

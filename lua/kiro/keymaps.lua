@@ -16,7 +16,7 @@ local function header_comment(str, line_len)
         .. string.rep('-', dash_count)
 end
 
-function replace_with_header()
+function Replace_with_header()
     local line = vim.api.nvim_get_current_line()
     local indent = line:match('^%s+') or ''
     local match = line:match('^%s*%-%-([^%-].+)%-%-$')
@@ -29,23 +29,12 @@ end
 vim.cmd [[
     augroup CommentHeader
         autocmd!
-        autocmd TextChanged,TextChangedI * lua replace_with_header()
+        autocmd TextChanged,TextChangedI * lua Replace_with_header()
         augroup END
 ]]
 
-
--- auto command to replace '-- str --' with header comment
--- vim.cmd [[
---     augroup CommentHeader
---         autocmd!
---         autocmd InsertLeave * lua replace_with_header()
---         augroup END
--- ]]
-
 vim.g.mapleader = ' '
 
-keymap('v', "<C-_>", '<Plug>(comment_toggle_linewise_visual)', n_opts)
-keymap('n', "<C-_>", '<Plug>(comment_toggle_linewise_current)', n_opts)
 
 -- Word kill
 keymap('i', '<C-BS>', '<C-w>')
@@ -80,26 +69,25 @@ keymap('i', '<C-S-Left>', '<Esc>v<C-Left>', n_opts)
 keymap('i', '<C-S-Right>', '<Esc>v<C-Right>', n_opts)
 
 -- Normal mode
-keymap('n', '<esc>', ':noh<CR>', n_opts)
+keymap('n', '<esc>', vim.cmd.noh, n_opts)
 
 --void paste
-keymap("x", "<leader>p", [["_dP]])
-keymap({ "n", "v" }, "<leader>d", [["_d]])
+-- keymap('x', '<leader>p', [["_dP]])
+-- keymap({ 'n', 'v' }, '<leader>d', [["_d]])
 
 -- tab navigation
 keymap('n', '<leader><Tab>', ':BufferLineCycleNext<CR>', n_opts)
-keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev ', n_opts)
+keymap('n', '<leader><S-Tab>', ':BufferLineCyclePrev<CR>', n_opts)
 for i = 1, 9, 1 do
     keymap(
         'n', '<leader><leader>' .. i,
-        ':BufferLineGoToBuffer ' .. i .. '<CR>',
+        function() require("bufferline").go_to(i, true) end,
         { silent = true, desc = "Goto buffer " .. i }
     )
 end
 
 -- close buffer
 keymap('n', '<leader>q', ':bd<CR>', n_opts)
-keymap('n', '<leader>wq', ':w<CR> :bd<CR>', n_opts)
 
 
 -- Move lines
@@ -112,9 +100,17 @@ keymap('n', '<A-Down>', '<C-w>j', n_opts)
 keymap('n', '<A-Up>', '<C-w>k', n_opts)
 keymap('n', '<A-Right>', '<C-w>l', n_opts)
 
-keymap('n', '<leader>t', '<C-w>s <C-w>10- :term<CR>', n_opts)
-keymap('n', '<leader>e', ':NvimTreeToggle<CR>', n_opts)
-keymap('n', '<leader>u', ':UndotreeToggle<CR>', n_opts)
+keymap('n', '<leader>e',
+    function() require('nvim-tree.api').tree.toggle() end,
+    { silent = true, desc = 'Toggle Nvimtree' }
+)
+keymap('n', '<leader>d',
+    function() require('trouble').toggle() end,
+    { silent = true, desc = 'Toggle Diagnostics' }
+)
+keymap('n', '<leader>u', ':UndotreeToggle<CR>',
+    { silent = true, desc = 'Toggle Undotree', noremap = true, }
+)
 
 
 -- Visual mode
@@ -124,10 +120,10 @@ keymap('v', '<A-k>', ":m '<-2<CR>gv=gv", n_opts)
 
 -- Visual selection
 local surround_map = function(char)
-    keymap('v', '<leader>' .. char, '<Plug>(nvim-surround-visual)' .. char .. ')', n_opts)
+    keymap('v', '<leader>' .. char, '<Plug>(nvim-surround-visual)' .. char, n_opts)
 end
 
-for _, char in ipairs({ '(', '[', '{', '<', '"', "'" }) do
+for _, char in ipairs({ '(', ')', '[', ']', '{', '}', '<', '>', '"', "'" }) do
     surround_map(char)
 end
 
