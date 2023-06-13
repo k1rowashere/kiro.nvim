@@ -10,6 +10,9 @@ return function()
             h = { name = 'Git Hunk' },
             v = { name = 'LSP Tools' },
         },
-
+        ['g'] = {
+            [','] = { 'Toggle end `,`' },
+            [';'] = { 'Toggle end `;`' },
+        }
     })
 end

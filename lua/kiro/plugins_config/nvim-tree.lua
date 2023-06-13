@@ -1,9 +1,11 @@
 return function()
-    require("nvim-tree").setup {
+    require('nvim-tree').setup {
         disable_netrw = true,
         hijack_unnamed_buffer_when_opening = true,
         sync_root_with_cwd = true,
-        view = { width = 35, },
+        view = {
+            width = 35,
+        },
         renderer = {
             indent_markers = { enable = true, },
             highlight_git = true,

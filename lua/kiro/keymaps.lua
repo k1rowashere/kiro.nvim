@@ -108,7 +108,7 @@ keymap('n', '<leader>d',
     function() require('trouble').toggle() end,
     { silent = true, desc = 'Toggle Diagnostics' }
 )
-keymap('n', '<leader>u', ':UndotreeToggle<CR>',
+keymap('n', '<leader>u', '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>',
     { silent = true, desc = 'Toggle Undotree', noremap = true, }
 )
 

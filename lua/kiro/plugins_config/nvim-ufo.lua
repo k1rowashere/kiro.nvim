@@ -42,10 +42,6 @@ vim.keymap.set('n', 'zM', ufo.closeAllFolds)
 vim.keymap.set('n', 'Z', ufo.peekFoldedLinesUnderCursor)
 
 ufo.setup({
-    -- provider_selector = function(bufnr, filetype, buftype)
-    --     return { 'treesitter', 'indent' }
-    -- end,
-
     open_fold_hl_timeout = 100,
     fold_virt_text_handler = handler,
 })

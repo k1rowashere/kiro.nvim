@@ -1,5 +1,5 @@
 return function()
-    require("transparent").setup({
+    require('transparent').setup({
         extra_groups = {
             'NormalFloat',
             'NvimTreeNormal',
@@ -8,6 +8,10 @@ return function()
             'GitSignsAdd',
             'GitSignsChange',
             'GitSignsDelete',
+            'FloatBorder',
+            'TelescopeNormal',
+            'TelescopeBorder',
+            'TelescopePromptNormal',
         },
         exclude_groups = {},
     })

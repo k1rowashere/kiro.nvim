@@ -39,7 +39,7 @@ local packer_plug = function(use)
                 height = 30,
                 quickfixheight = 10,
                 excluded_filetypes = { 'fterm', 'term', 'toggleterm' },
-                compatible_filetrees = { 'nvimtree' },
+                compatible_filetrees = { 'nvimtree', 'undotree' },
             })
         end
     }

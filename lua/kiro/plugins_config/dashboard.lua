@@ -9,10 +9,19 @@ require('dashboard').setup({
             --     action = function()
             --         vim.cmd('SessionRestore')
             --     end
-            -- },
+            -- },-
+            {
+                icon = '',
+                desc = 'File Browser',
+                key = 'e',
+                action = function()
+                    vim.cmd('enew')
+                    require('nvim-tree.api').tree.open()
+                end
+            },
             {
                 icon = '󱝩',
-                desc = 'Find Project',
+                desc = 'Search Sessions',
                 key = 'p',
                 action = function()
                     require('auto-session.session-lens').search_session()

@@ -5,12 +5,6 @@ vim.cmd [[ autocmd TermOpen * setlocal nonumber norelativenumber ]]
 vim.opt.wrap     = false
 vim.opt.undofile = true
 
-vim.cmd [[
-augroup format_options
-    autocmd!
-    autocmd BufEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-]]
-
 
 -- tab options
 vim.opt.tabstop        = 4
@@ -57,26 +51,31 @@ vim.g.lualine_disabled_filetypes = {
     'diff',
 }
 
+vim.g.loaded_netrw               = 1
+vim.g.loaded_netrwPlugin         = 1
 
-vim.g.loaded_netrw       = 1
-vim.g.loaded_netrwPlugin = 1
+vim.opt.termguicolors            = true
+vim.opt.mousemev                 = true
 
-vim.opt.termguicolors    = true
-vim.opt.mousemev         = true
-
-vim.opt.sessionoptions   = 'blank,buffers,curdir,folds,help,' ..
+vim.opt.sessionoptions           = 'blank,buffers,curdir,folds,help,' ..
     'tabpages,winsize,winpos,terminal,localoptions'
 
--- Copilot
--- vim.g.copilot_no_tab_map      = true
--- vim.g.copilot_assume_mapped   = true
--- vim.g.copilot_tab_fallback    = ""
 
--- Fold options
 -- Save fold settings when saving a file
 vim.cmd [[
-    augroup highlight_yank
+augroup highlight_yank
     autocmd!
     au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=200})
     augroup END
+
+augroup save_folds
+    autocmd!
+    autocmd BufWritePre ?* mkview
+    autocmd BufWritePost ?* silent! loadview
+    augroup END
+
+augroup format_options
+    autocmd!
+    autocmd BufEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+augroup END
 ]]
