@@ -1,27 +1,27 @@
 -- Vim options
-vim.opt.nu             = true
+vim.opt.nu = true
 vim.opt.relativenumber = true
-vim.cmd [[ autocmd TermOpen * setlocal nonumber norelativenumber ]]
-vim.opt.wrap     = false
+vim.cmd([[ autocmd TermOpen * setlocal nonumber norelativenumber ]])
+vim.opt.wrap = false
 vim.opt.undofile = true
 
-
 -- tab options
-vim.opt.tabstop        = 4
-vim.opt.shiftwidth     = 4
-vim.opt.expandtab      = true
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
 
 -- color column
-vim.opt.cursorline     = true
+vim.opt.cursorline = true
+vim.opt.colorcolumn = '81'
 
 -- open window options
-vim.opt.splitright     = true
-vim.opt.splitbelow     = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
 -- scroll options
-vim.opt.scrolloff      = 10
+vim.opt.scrolloff = 10
 
-vim.g.dap_buffers      = {
+vim.g.dap_buffers = {
     'dap-repl',
     'dapui_scopes',
     'dapui_breakpoints',
@@ -51,18 +51,17 @@ vim.g.lualine_disabled_filetypes = {
     'diff',
 }
 
-vim.g.loaded_netrw               = 1
-vim.g.loaded_netrwPlugin         = 1
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
-vim.opt.termguicolors            = true
-vim.opt.mousemev                 = true
+vim.opt.termguicolors = true
+vim.opt.mousemev = true
 
-vim.opt.sessionoptions           = 'blank,buffers,curdir,folds,help,' ..
-    'tabpages,winsize,winpos,terminal,localoptions'
-
+vim.opt.sessionoptions = 'blank,buffers,curdir,folds,help,'
+    .. 'tabpages,winsize,winpos,terminal,localoptions'
 
 -- Save fold settings when saving a file
-vim.cmd [[
+vim.cmd([[
 augroup highlight_yank
     autocmd!
     au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=200})
@@ -78,4 +77,4 @@ augroup format_options
     autocmd!
     autocmd BufEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 augroup END
-]]
+]])

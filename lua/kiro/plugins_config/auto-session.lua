@@ -1,4 +1,4 @@
-require('auto-session').setup({
+return {
     log_level = 'error',
     auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
     -- auto_session_enable_last_session = vim.loop.cwd() == vim.loop.os_homedir(),
@@ -6,7 +6,7 @@ require('auto-session').setup({
     cwd_change_handling = {
         restore_upcoming_session = true,
         post_cwd_changed_hook = function()
-            require("lualine").refresh()
+            require('lualine').refresh()
         end,
     },
     pre_save_cmds = {
@@ -18,4 +18,4 @@ require('auto-session').setup({
     session_lens = {
         load_on_setup = true,
     },
-})
+}

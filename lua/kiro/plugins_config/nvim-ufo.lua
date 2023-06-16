@@ -26,6 +26,7 @@ local handler        = function(virtText, lnum, endLnum, width, truncate)
     return newVirtText
 end
 
+--- @module 'lua/ufo'
 local ufo            = require('ufo')
 
 vim.o.foldcolumn     = '1'
@@ -41,7 +42,7 @@ vim.keymap.set('n', 'zR', ufo.openAllFolds)
 vim.keymap.set('n', 'zM', ufo.closeAllFolds)
 vim.keymap.set('n', 'Z', ufo.peekFoldedLinesUnderCursor)
 
-ufo.setup({
+return {
     open_fold_hl_timeout = 100,
     fold_virt_text_handler = handler,
-})
+}

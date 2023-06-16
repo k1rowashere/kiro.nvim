@@ -1,3 +1,4 @@
 /package-lock.json
 /plugin/
 .luarc.json
+lazy-lock.json 

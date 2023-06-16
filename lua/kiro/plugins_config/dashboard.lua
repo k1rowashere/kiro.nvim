@@ -1,4 +1,4 @@
-require('dashboard').setup({
+return {
     theme = 'hyper',
     config = {
         shortcut = {
@@ -65,6 +65,4 @@ require('dashboard').setup({
         file_width = 69,
         file_height = 10,
     }
-})
-
-vim.cmd('hi DashboardShortCutIcon guifg=#f6c177')
+}
