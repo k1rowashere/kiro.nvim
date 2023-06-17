@@ -1,2 +1,3 @@
 vim.loader.enable()
-require("kiro")
+vim.g.colorscheme = 'rose-pine'
+require('kiro')

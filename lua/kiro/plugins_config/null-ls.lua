@@ -7,11 +7,12 @@ null_ls.setup({
                 return params.options
                     and params.options.tabSize
                     and {
-                        "--tab-width",
+                        '--tab-width',
                         params.options.tabSize,
                     }
             end,
         }),
         null_ls.builtins.formatting.stylua,
-    }
+        null_ls.builtins.formatting.clang_format,
+    },
 })

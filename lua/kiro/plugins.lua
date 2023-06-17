@@ -12,45 +12,43 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
-    { 'catppuccin/nvim', name = 'catppuccin', lazy = false, priority = 1000 },
+    { import = 'kiro.plugins.theme' },
+    { import = 'kiro.plugins.lsp' },
+    { import = 'kiro.plugins.treesitter' },
+    { import = 'kiro.plugins.autocomplete' },
+    { import = 'kiro.plugins.lines' },
     {
-        'rose-pine/neovim',
-        name = 'rose-pine',
+        'glepnir/dashboard-nvim',
+        dev = true,
         lazy = false,
-        priority = 1000,
-        opts = {
-            highlight_groups = {
-                ColorColumn = { bg = 'rose' },
-                CursorLine = { bg = 'foam', blend = 5 },
-            },
+        dependencies = {
+            'nvim-tree/nvim-web-devicons',
+            'rmagatti/auto-session',
         },
-        config = function(_, opts)
-            require('rose-pine').setup(opts)
-            vim.cmd('set termguicolors')
-            vim.cmd([[colorscheme rose-pine]])
-            vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
-        end,
-    },
-    {
-        'xiyaowong/transparent.nvim',
-        lazy = false,
-        priority = 100,
-        opts = require('kiro.plugins_config.transparent'),
+        opts = require('kiro.plugins_config.dashboard'),
     },
     ----------------------------------- Git  -----------------------------------
     { 'tpope/vim-fugitive', cmd = 'Git' },
     {
         'lewis6991/gitsigns.nvim',
-        lazy = false,
+        event = 'BufEnter',
         opts = require('kiro.plugins_config.gitsigns'),
         config = function(_, opts)
             require('gitsigns').setup(opts)
-            require('scrollbar.handlers.gitsigns').setup()
+            -- require('scrollbar.handlers.gitsigns').setup()
         end,
     },
     ---------------------------------- Utils  ----------------------------------
     { 'tpope/vim-repeat', lazy = false },
-    { 'fedepujol/move.nvim', cmd = { 'MoveLine', 'MoveBlock' } },
+    {
+        'matze/vim-move',
+        keys = {
+            { mode = { 'v', 'n' }, '<A-j>' },
+            { mode = { 'v', 'n' }, '<A-k>' },
+            { mode = { 'v', 'n' }, '<A-h>' },
+            { mode = { 'v', 'n' }, '<A-l>' },
+        },
+    },
     { 'nvim-telescope/telescope.nvim', dependencies = 'nvim-lua/plenary.nvim' },
     {
         'beauwilliams/focus.nvim',
@@ -66,13 +64,14 @@ local plugins = {
     {
         'mg979/vim-visual-multi',
         keys = { '<C-n>', '<C-p>', '<C-Down>', '<C-Up>' },
-        config = function()
-            vim.cmd('VMTheme nord')
-        end,
+        config = function() vim.cmd('VMTheme nord') end,
     },
     {
         'numToStr/Comment.nvim',
-        keys = { { 'g', mode = { 'v', 'n' } } },
+        keys = {
+            { 'gc', mode = { 'x', 'n' }, desc = 'Toggle Line Comment' },
+            { 'gb', mode = { 'x', 'n' }, desc = 'Toggle Block Comment' },
+        },
         opts = {},
     },
     {
@@ -99,107 +98,35 @@ local plugins = {
     },
     ------------------------------ Syntax and LSP ------------------------------
     { 'gorbit99/codewindow.nvim', opts = { z_index = 50 } },
-    {
-        'nvim-treesitter/nvim-treesitter',
-        event = 'BufEnter',
-        dependencies = 'mrjones2014/nvim-ts-rainbow',
-        opts = require('kiro.plugins_config.nvim-treesitter'),
-        main = 'nvim-treesitter.configs',
-    },
-    { 'nvim-treesitter/nvim-treesitter-context', lazy = false },
-    {
-        'ckolkey/ts-node-action',
-        dependencies = { 'nvim-treesitter' },
-        opts = {},
-    },
-    {
-        'VonHeikemen/lsp-zero.nvim',
-        lazy = false,
-        branch = 'v2.x',
-        dependencies = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
-            { 'jose-elias-alvarez/null-ls.nvim' },
-
-            -- Autocompletion
-            { 'onsails/lspkind.nvim' },
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
-
-            -- Copilot
-            {
-                'zbirenbaum/copilot.lua',
-                opts = {
-                    suggestion = { enabled = false },
-                    panel = { enabled = false },
-                },
-            },
-            {
-                'zbirenbaum/copilot-cmp',
-                dependencies = 'nvim-tree/nvim-web-devicons',
-                config = true,
-            },
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
-        },
-        config = function()
-            require('kiro.plugins_config.lsp-zero')
-        end,
-    },
     -------------------------------- Debugging  --------------------------------
     {
         'mfussenegger/nvim-dap',
-        config = function()
-            require('kiro.plugins_config.nvim-dap')
-        end,
+        config = function() require('kiro.plugins_config.nvim-dap') end,
     },
     {
         'rcarriga/nvim-dap-ui',
         dependencies = { 'mfussenegger/nvim-dap' },
-        keys = '<leader>db',
-        config = function()
-            require('dapui').setup()
-        end,
+        -- keys = '<leader>db',
+        main = 'dapui',
+        opts = {},
     },
     { 'folke/trouble.nvim' },
     ----------------------------------------------------------------------------
     {
         'lukas-reineke/indent-blankline.nvim',
         lazy = false,
-        config = function()
-            require('kiro.plugins_config.indent')
-        end,
+        config = function() require('kiro.plugins_config.indent') end,
     },
     {
-        'petertriho/nvim-scrollbar',
-        opts = {
-            handlers = {
-                gitsigns = true,
-                search = true,
-            },
-        },
+        'lewis6991/satellite.nvim',
+        lazy = false,
+        opts = {},
     },
     {
         'kevinhwang91/nvim-ufo',
         event = 'BufEnter',
         dependencies = 'kevinhwang91/promise-async',
-        opts = function()
-            return require('kiro.plugins_config.nvim-ufo')
-        end,
-    },
-    {
-        'kevinhwang91/nvim-hlslens',
-        config = function()
-            require('scrollbar.handlers.search').setup()
-        end,
+        opts = function() return require('kiro.plugins_config.nvim-ufo') end,
     },
     {
         'rmagatti/auto-session',
@@ -214,60 +141,6 @@ local plugins = {
     {
         'mbbill/undotree',
         cmd = { 'UndotreeOpen', 'UndotreeToggle' },
-    },
-    {
-        'akinsho/bufferline.nvim',
-        event = 'ColorScheme',
-        dependencies = 'nvim-tree/nvim-web-devicons',
-        opts = require('kiro.plugins_config.bufferline'),
-        config = function(_, opts)
-            require('bufferline').setup(opts)
-            vim.g.transparent_groups = vim.list_extend(
-                vim.g.transparent_groups or {},
-                vim.tbl_map(function(v)
-                    return v.hl_group
-                end, vim.tbl_values(
-                    require('bufferline.config').highlights
-                ))
-            )
-        end,
-    },
-    {
-        'nvim-lualine/lualine.nvim',
-        event = 'ColorScheme',
-        dependencies = {
-            'nvim-tree/nvim-web-devicons',
-            'arkav/lualine-lsp-progress',
-        },
-        opts = function()
-            return require('kiro.plugins_config.lualine')
-        end,
-    },
-    {
-        'luukvbaal/statuscol.nvim',
-        lazy = false,
-        opts = function()
-            return require('kiro.plugins_config.statuscol')
-        end,
-    },
-    {
-        'utilyre/barbecue.nvim',
-        lazy = false,
-        dependencies = {
-            'SmiteshP/nvim-navic',
-            'nvim-tree/nvim-web-devicons',
-        },
-        opts = { theme = { normal = { bg = 'none' } } },
-    },
-    {
-        'glepnir/dashboard-nvim',
-        dev = true,
-        lazy = false,
-        dependencies = {
-            'nvim-tree/nvim-web-devicons',
-            'rmagatti/auto-session',
-        },
-        opts = require('kiro.plugins_config.dashboard'),
     },
     ----------------------------- Domain Specific  -----------------------------
     {
