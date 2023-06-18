@@ -1,5 +1,5 @@
 local opts = function(desc)
-  return { noremap = true, silent = true, desc = desc or '' }
+    return { noremap = true, silent = true, desc = desc or '' }
 end
 local km = vim.keymap.set
 
@@ -49,12 +49,12 @@ km('n', '<leader><Tab>', '<cmd>BufferLineCycleNext<CR>', opts('Next Buffer'))
 km('n', '<leader><S-Tab>', '<cmd>BufferLineCyclePrev<CR>', opts('Prev Buffer'))
 -- Todo: replace this keymap
 for i = 1, 9, 1 do
-  km(
-    'n',
-    '<leader><leader>' .. i,
-    function() require('bufferline').go_to(i, true) end,
-    opts('Goto Buffer ' .. i)
-  )
+    km(
+        'n',
+        '<leader><leader>' .. i,
+        function() require('bufferline').go_to(i, true) end,
+        opts('Goto Buffer ' .. i)
+    )
 end
 
 -- close buffer
@@ -73,62 +73,62 @@ km('n', '<A-Up>', '<C-w>k', opts())
 km('n', '<A-Right>', '<C-w>l', opts())
 
 km(
-  'n',
-  '<leader>ff',
-  function() require('telescope.builtin').find_files() end,
-  opts('Find Files')
+    'n',
+    '<leader>ff',
+    function() require('telescope.builtin').find_files() end,
+    opts('Find Files')
 )
 km(
-  'n',
-  '<leader>fb',
-  function() require('telescope.builtin').buffers() end,
-  opts('Find Buffer')
+    'n',
+    '<leader>fb',
+    function() require('telescope.builtin').buffers() end,
+    opts('Find Buffer')
 )
 km(
-  'n',
-  '<leader>fg',
-  function() require('telescope.builtin').live_grep() end,
-  opts('Live Grep')
+    'n',
+    '<leader>fg',
+    function() require('telescope.builtin').live_grep() end,
+    opts('Live Grep')
 )
 km(
-  'n',
-  '<leader>fc',
-  function() require('telescope.builtin').current_buffer_fuzzy_find() end,
-  opts('Current Buffer Fuzzy Find')
+    'n',
+    '<leader>fc',
+    function() require('telescope.builtin').current_buffer_fuzzy_find() end,
+    opts('Current Buffer Fuzzy Find')
 )
 km(
-  'n',
-  '<leader>fs',
-  function() require('auto-session.session-lens').search_session() end,
-  opts('Session Search')
+    'n',
+    '<leader>fs',
+    function() require('auto-session.session-lens').search_session() end,
+    opts('Session Search')
 )
 km(
-  'n',
-  '<leader>e',
-  function() require('nvim-tree.api').tree.toggle() end,
-  opts('Toggle Nvimtree')
+    'n',
+    '<leader>e',
+    function() require('nvim-tree.api').tree.toggle() end,
+    opts('Toggle Nvimtree')
 )
 km(
-  'n',
-  '<leader>d',
-  function() require('trouble').toggle() end,
-  opts('Toggle Diagnostics')
+    'n',
+    '<leader>d',
+    function() require('trouble').toggle() end,
+    opts('Toggle Diagnostics')
 )
 km(
-  'n',
-  '<leader>u',
-  '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>',
-  opts('Toggle Undotree')
+    'n',
+    '<leader>u',
+    '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>',
+    opts('Toggle Undotree')
 )
 km(
-  'n',
-  '<leader>m',
-  function() require('codewindow').toggle_minimap() end,
-  opts('Toggle Minimap')
+    'n',
+    '<leader>m',
+    function() require('codewindow').toggle_minimap() end,
+    opts('Toggle Minimap')
 )
 km(
-  'n',
-  '<leader>a',
-  function() require('ts-node-action').node_action() end,
-  opts('Run Node Action')
+    'n',
+    '<leader>a',
+    function() require('ts-node-action').node_action() end,
+    opts('Run Node Action')
 )
