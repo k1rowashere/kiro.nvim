@@ -1,13 +1,11 @@
 local opts = function(desc)
-    return { noremap = true, silent = true, desc = desc or '' }
+    return { noremap = true, silent = true, desc = desc }
 end
+
 local km = vim.keymap.set
 
 vim.g.mapleader = ' '
 
--- Word kill
-km('i', '<C-BS>', '<C-w>')
-km('i', '<M-BS>', '<C-w>')
 km('i', '<C-Del>', '<esc>dei', opts())
 
 -- Shift Select
@@ -37,17 +35,14 @@ km('i', '<C-S-Down>', '<Esc>v<Down>', opts())
 km('i', '<C-S-Left>', '<Esc>v<C-Left>', opts())
 km('i', '<C-S-Right>', '<Esc>v<C-Right>', opts())
 
--- Normal mode
 km('n', '<esc>', vim.cmd.noh, opts())
 
---void paste
 -- keymap('x', '<leader>p', [["_dP]])
 -- keymap({ 'n', 'v' }, '<leader>d', [["_d]])
 
 -- tab navigation
 km('n', '<leader><Tab>', '<cmd>BufferLineCycleNext<CR>', opts('Next Buffer'))
 km('n', '<leader><S-Tab>', '<cmd>BufferLineCyclePrev<CR>', opts('Prev Buffer'))
--- Todo: replace this keymap
 for i = 1, 9, 1 do
     km(
         'n',
@@ -56,15 +51,10 @@ for i = 1, 9, 1 do
         opts('Goto Buffer ' .. i)
     )
 end
+km('n', '<leader><leader>', '<cmd>BufferLinePick<CR>', opts('Goto Buffer'))
 
 -- close buffer
 km('n', '<leader>q', '<cmd>bd<CR>', opts('Close Buffer'))
-
--- Move line / block
--- keymap('n', '<A-j>', '<cmd>MoveLine(1)<CR>', opts('Move down'))
--- keymap('n', '<A-k>', '<cmd>MoveLine(-1)<CR>', opts('Move up'))
--- keymap('v', '<A-j>', ':MoveBlock(1)<CR>', opts('Move down'))
--- keymap('v', '<A-k>', ':MoveBlock(-1)<CR>', opts('Move up'))
 
 -- Better window navigation
 km('n', '<A-Left>', '<C-w>h', opts())
@@ -131,4 +121,16 @@ km(
     '<leader>a',
     function() require('ts-node-action').node_action() end,
     opts('Run Node Action')
+)
+km(
+    'n',
+    '<F29>',
+    function() require('dapui').toggle() end,
+    opts('Start Debugging')
+)
+km(
+    'v',
+    '<leader>rr',
+    function() require('refactoring').select_refactor() end,
+    opts('Refactoring Menu')
 )

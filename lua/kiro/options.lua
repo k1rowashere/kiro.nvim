@@ -3,6 +3,7 @@ vim.opt.nu = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
 vim.opt.undofile = true
+vim.opt.swapfile = false
 
 -- tab options
 vim.opt.tabstop = 4

@@ -1,5 +1,13 @@
 return {
-    { 'ThePrimeagen/harpoon', lazy = true },
+    {
+        'ThePrimeagen/harpoon',
+        dependencies = 'nvim-lua/plenary.nvim',
+        lazy = true,
+    },
+    {
+        'ThePrimeagen/refactoring.nvim',
+        opts = {},
+    },
     { 'tpope/vim-repeat', lazy = false },
     { 'Darazaki/indent-o-matic', event = 'BufEnter *?' },
     {

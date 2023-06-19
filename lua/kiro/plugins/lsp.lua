@@ -28,7 +28,7 @@ local function attach_handle(_, bufnr)
     -- km('n', lead('r'), lsp.references, opts('References'))
     km('n', lead('r'), '<cmd>Telescope lsp_references<cr>', opts('References'))
     km('n', lead('s'), lb.signature_help, opts('Signature Help'))
-    km('n', '<F2>', lb.rename, opts('Rename Sybmol'))
+    km('n', '<F2>', lb.rename, opts('Rename Symbol'))
     km(
         { 'n', 'x' },
         '<F3>',
@@ -165,4 +165,5 @@ return {
         },
         config = lsp_zero_config,
     },
+    { 'folke/neodev.nvim', ft = 'lua', opts = {} },
 }
