@@ -61,9 +61,8 @@ return {
             footer = {},
         },
         preview = {
-            -- command = 'lolcat -t -a -d 2',
-            command = 'lolcat -t -d 2',
-            file_path = '/home/kirowashere/.config/nvim/neovim.txt',
+            command = 'cat ~/.config/nvim/neovim.txt',
+            file_path = '~/.config/nvim/neovim.txt',
             file_width = 69,
             file_height = 10,
         },
