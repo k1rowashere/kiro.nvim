@@ -149,17 +149,21 @@ return {
     },
     {
         'luukvbaal/statuscol.nvim',
-        event = 'BufEnter *?',
+        enabled = false,
+        -- event = 'BufEnter *?',
+        dependencies = { 'gitsigns.nvim', 'nvim-dap' },
         config = function()
             local builtin = require('statuscol.builtin')
-
             require('statuscol').setup({
                 relculright = true,
+                ft_ignore = vim.g.non_file_buffers,
                 segments = {
                     {
                         sign = {
                             name = { '.*' },
                             text = { '.*' },
+                            namespace = { '.*' },
+
                             maxwidth = 1,
                             fillchar = ' ',
                         },

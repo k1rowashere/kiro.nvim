@@ -29,12 +29,12 @@ end
 
 return {
     'kevinhwang91/nvim-ufo',
-    event = 'BufEnter',
+    event = 'BufEnter *?',
     dependencies = 'kevinhwang91/promise-async',
     init = function()
         --- @module 'lua/ufo'
         local ufo = require('ufo')
-        vim.o.foldcolumn = '1'
+        -- vim.o.foldcolumn = '1'
         vim.o.foldlevel = 99
         vim.o.foldlevelstart = -1
         vim.o.foldenable = true
@@ -43,7 +43,26 @@ return {
         vim.o.foldmethod = 'expr'
         vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
 
-        vim.keymap.set('n', 'zR', ufo.openAllFolds)
+        local km_set_wrap = function(key)
+            vim.keymap.set('n', key, function()
+                if not pcall(vim.cmd, 'normal! ' .. key) then
+                    vim.api.nvim_err_writeln('No folds under cursor')
+                end
+                vim.cmd('IndentBlanklineRefresh')
+            end, { noremap = true, silent = true })
+        end
+
+        km_set_wrap('za')
+        km_set_wrap('zA')
+        km_set_wrap('zo')
+        km_set_wrap('zO')
+        km_set_wrap('zr')
+
+        vim.keymap.set('n', 'zR', function()
+            ufo.openAllFolds()
+            vim.cmd('IndentBlanklineRefresh')
+        end)
+
         vim.keymap.set('n', 'zM', ufo.closeAllFolds)
         vim.keymap.set('n', 'Z', ufo.peekFoldedLinesUnderCursor)
     end,
