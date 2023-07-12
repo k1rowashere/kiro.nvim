@@ -33,4 +33,12 @@ return {
         dependencies = { 'nvim-treesitter' },
         opts = {},
     },
+    {
+        'stevearc/aerial.nvim',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+            'nvim-tree/nvim-web-devicons',
+        },
+        opts = {},
+    },
 }

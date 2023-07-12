@@ -118,10 +118,11 @@ km(
 )
 km(
     'n',
-    '<leader>a',
+    '<leader>na',
     function() require('ts-node-action').node_action() end,
     opts('Run Node Action')
 )
+km('n', '<leader>a', '<cmd>AerialToggle!<CR>')
 km(
     'n',
     '<F29>',
