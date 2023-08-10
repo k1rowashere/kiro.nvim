@@ -16,7 +16,7 @@ return {
     },
     {
         'norcalli/nvim-colorizer.lua',
-        ft = { 'css', 'javascript', 'html' },
+        ft = { 'css', 'scss', 'javascript', 'html' },
         cmd = { 'ColorizerToggle', 'ColorizerAttachToBuffer' },
         opts = {
             'scss',

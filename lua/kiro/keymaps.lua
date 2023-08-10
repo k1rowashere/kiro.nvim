@@ -6,6 +6,9 @@ local km = vim.keymap.set
 
 vim.g.mapleader = ' '
 
+-- Disable <F1> key
+km({ 'n', 'i' }, '<F1>', '<nop>')
+
 km('i', '<C-Del>', '<esc>dei', opts())
 
 -- Shift Select
@@ -122,7 +125,7 @@ km(
     function() require('ts-node-action').node_action() end,
     opts('Run Node Action')
 )
-km('n', '<leader>a', '<cmd>AerialToggle!<CR>')
+km('n', '<leader>a', '<cmd>AerialNavToggle<CR>')
 km(
     'n',
     '<F29>',

@@ -4,6 +4,7 @@ vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.undofile = true
 vim.o.swapfile = false
+vim.o.updatetime = 300
 
 -- tab options
 vim.o.tabstop = 4

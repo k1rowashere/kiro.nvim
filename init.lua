@@ -1,3 +1,4 @@
 vim.loader.enable()
-vim.g.colorscheme = 'rose-pine'
+-- vim.g.colorscheme = 'catppuccin'
+vim.g.colorscheme = 'catppuccin'
 require('kiro')

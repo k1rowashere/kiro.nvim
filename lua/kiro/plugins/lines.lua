@@ -20,7 +20,7 @@ end
 
 local lualine_opts = {
     options = {
-        theme = mod_theme,
+        theme = 'auto',
         disabled_filetypes = {
             statusline = vim.g.lualine_disabled_filetypes,
         },
