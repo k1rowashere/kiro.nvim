@@ -1,23 +1,3 @@
-local function mod_theme()
-    if vim.g.colorscheme == 'rose-pine' then
-        local theme = require('lualine.themes.rose-pine')
-        local theme_mod = {
-            inactive = {
-                a = { bg = '#1e1e2a' },
-                b = { bg = '#1e1e2a' },
-                c = { bg = '#1e1e2a' },
-            },
-            normal = { c = { bg = '#383146' } },
-            insert = { c = { bg = '#313348' } },
-            command = { c = { bg = '#382A42' } },
-            visual = { c = { bg = '#342F4A' } },
-            replace = { c = { bg = '#34324B' } },
-        }
-        return vim.tbl_deep_extend('force', theme, theme_mod)
-    end
-    return 'auto'
-end
-
 local lualine_opts = {
     options = {
         theme = 'auto',
@@ -86,48 +66,50 @@ local function rm_devicon_bg(element)
     return icon, hl
 end
 
-local bufferline_opts = {
-    options = {
-        mode = 'buffers',
-        separator_style = 'slope',
-        hover = {
-            enabled = true,
-            delay = 100,
-            reveal = { 'close' },
-        },
-        offsets = {
-            {
-                filetype = 'NvimTree',
-                text = 'File Explorer',
-                text_align = 'left',
-                separator = true,
-            },
-            {
-                filetype = 'undotree',
-                text = 'Undo Tree',
-                text_align = 'left',
-                separator = true,
-            },
-        },
-        numbers = 'ordinal',
-        diagnostics = 'nvim_lsp',
-        get_element_icon = rm_devicon_bg,
-    },
-    highlights = {
-        buffer_selected = { bg = 'none' },
-        buffer_visible = { bg = 'none' },
-    },
-}
-
 return {
     {
         'akinsho/bufferline.nvim',
-        event = 'ColorScheme',
+        lazy = false,
         dependencies = {
             'nvim-tree/nvim-web-devicons',
         },
-        opts = bufferline_opts,
+        opts = {
+            options = {
+                mode = 'buffers',
+                separator_style = 'slope',
+                hover = {
+                    enabled = true,
+                    delay = 100,
+                    reveal = { 'close' },
+                },
+                offsets = {
+                    {
+                        filetype = 'NvimTree',
+                        text = 'File Explorer',
+                        text_align = 'left',
+                        separator = true,
+                    },
+                    {
+                        filetype = 'undotree',
+                        text = 'Undo Tree',
+                        text_align = 'left',
+                        separator = true,
+                    },
+                },
+                numbers = 'ordinal',
+                diagnostics = 'nvim_lsp',
+                get_element_icon = rm_devicon_bg,
+            },
+        },
         config = function(_, opts)
+            local highlights =
+                require('catppuccin.groups.integrations.bufferline').get()
+
+            opts.highlights = vim.tbl_extend('force', highlights(), {
+                buffer_selected = { bg = 'none' },
+                buffer_visible = { bg = 'none' },
+            })
+
             require('bufferline').setup(opts)
             vim.g.transparent_groups = vim.list_extend(
                 vim.g.transparent_groups or {},
@@ -186,6 +168,6 @@ return {
             'SmiteshP/nvim-navic',
             'nvim-tree/nvim-web-devicons',
         },
-        opts = { theme = { normal = { bg = 'none' } } },
+        opts = { theme = 'catppuccin-mocha' },
     },
 }

@@ -2,7 +2,6 @@ return {
     {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufEnter',
-        dependencies = 'mrjones2014/nvim-ts-rainbow',
         opts = {
             auto_install = true,
             rainbow = {
@@ -27,7 +26,15 @@ return {
         },
         main = 'nvim-treesitter.configs',
     },
-    { 'nvim-treesitter/nvim-treesitter-context', lazy = false },
+    { 'HiPhish/rainbow-delimiters.nvim' },
+    {
+        'nvim-treesitter/nvim-treesitter-context',
+        lazy = false,
+        opts = {
+            max_lines = 10,
+            multiline_threshold = 2,
+        },
+    },
     {
         'ckolkey/ts-node-action',
         dependencies = { 'nvim-treesitter' },

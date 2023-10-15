@@ -4,14 +4,10 @@ return {
     {
         'lukas-reineke/indent-blankline.nvim',
         dependencies = 'nvim-treesitter/nvim-treesitter',
+        main = 'ibl',
         opts = {
-            show_current_context = true,
-            show_current_context_start = true,
-            show_trailing_blankline_indent = false,
-            use_treesitter = true,
-            char = '',
-            context_char = '│',
-            filetype_exclude = vim.g.non_file_buffers,
+            scope = { enabled = true },
+            exclude = { filetypes = vim.g.non_file_buffers },
         },
     },
     {

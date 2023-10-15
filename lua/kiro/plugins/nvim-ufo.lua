@@ -48,7 +48,7 @@ return {
                 if not pcall(vim.cmd, 'normal! ' .. key) then
                     vim.api.nvim_err_writeln('No folds under cursor')
                 end
-                vim.cmd('IndentBlanklineRefresh')
+                require('ibl').debounced_refresh(0)
             end, { noremap = true, silent = true })
         end
 
@@ -60,7 +60,7 @@ return {
 
         vim.keymap.set('n', 'zR', function()
             ufo.openAllFolds()
-            vim.cmd('IndentBlanklineRefresh')
+            require('ibl').debounced_refresh(0)
         end)
 
         vim.keymap.set('n', 'zM', ufo.closeAllFolds)
