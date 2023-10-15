@@ -37,6 +37,21 @@ null_ls.setup({
     },
 })
 
+lspconfig.rust_analyzer.setup({
+    settings = {
+        ['rust-analyzer'] = {
+            checkOnSave = {
+                command = 'clippy',
+            },
+            inlayHints = {
+                closureReturnTypeHints = {
+                    enable = 'always',
+                },
+            },
+        },
+    },
+})
+
 vim.list_extend(lspconfig.tailwindcss.filetypes, { 'rust' })
 lspconfig.tailwindcss.setup({
     init_options = {
@@ -52,6 +67,13 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 lspconfig.cssls.setup({
     capabilities = capabilities,
+    settings = {
+        css = {
+            lint = {
+                unknownAtRules = 'ignore',
+            },
+        },
+    },
 })
 
 vim.diagnostic.config({ virtual_text = true })

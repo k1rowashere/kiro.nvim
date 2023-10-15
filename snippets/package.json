@@ -1,0 +1,13 @@
+{
+    "name": "kiro's snippets",
+    "contributes": {
+        "snippets": [
+            {
+                "language": [
+                    "rust"
+                ],
+                "path": "./rust.json"
+            }
+        ]
+    }
+}

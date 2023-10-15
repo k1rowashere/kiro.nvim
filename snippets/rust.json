@@ -1,0 +1,27 @@
+{
+    "leptos_component": {
+        "prefix": "component",
+        "body": [
+            "#[component]",
+            "fn ${1:ComponentName}(${2:args}) -> impl IntoView {",
+            "    ${3:unimplemented!()}",
+            "}"
+        ]
+    },
+    "cfg_ssr": {
+        "prefix": "cfg_ssr",
+        "body": ["#[cfg(feature = \"ssr\")]"]
+    },
+    "leptos_req": {
+        "prefix": "req",
+        "body": ["let req = expect_context::<actix_web::HttpRequest>();"]
+    },
+    "get_db_pool": {
+        "prefix": "pool",
+        "body": [
+            "let pool = req",
+            "    .app_data::<sqlx::Pool<sqlx::Sqlite>>()",
+            "    .expect(\"DB ctx not found\");"
+        ]
+    }
+}

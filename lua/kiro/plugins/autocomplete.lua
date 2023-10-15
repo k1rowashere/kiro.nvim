@@ -31,7 +31,14 @@ return {
             dependencies = 'nvim-tree/nvim-web-devicons',
             config = true,
         },
-        { 'L3MON4D3/LuaSnip' },
+        {
+            'L3MON4D3/LuaSnip',
+            config = function()
+                require('luasnip.loaders.from_vscode').lazy_load({
+                    paths = './snippets',
+                })
+            end,
+        },
         { 'rafamadriz/friendly-snippets' },
     },
     config = function()
@@ -43,8 +50,10 @@ return {
 
         cmp.setup({
             enabled = function()
-                local in_prompt = vim.api.nvim_buf_get_option(0, 'buftype')
-                    == 'prompt'
+                local in_prompt = vim.api.nvim_get_option_value(
+                    'buftype',
+                    { buf = 0 }
+                ) == 'prompt'
                 if in_prompt then return false end
                 return true
             end,

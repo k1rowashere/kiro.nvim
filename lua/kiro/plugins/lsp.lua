@@ -1,4 +1,4 @@
-local function attach_handle(_, bufnr)
+local function attach_handle(client, bufnr)
     local signs =
         { Error = ' ', Warn = ' ', Hint = '󰮦 ', Info = ' ' }
 
@@ -20,6 +20,16 @@ local function attach_handle(_, bufnr)
 
     local lead = function(key) return 'g' .. key end
 
+    -- inlay hints,
+    if client.server_capabilities.inlayHintProvider then
+        km(
+            'n',
+            lead('h'),
+            function() vim.lsp.inlay_hint(bufnr) end,
+            opts('Toggle Inlay Hints')
+        )
+    end
+
     km('n', 'K', lb.hover, opts('LSP Hover'))
     km('n', lead('d'), lb.definition, opts('Goto Definition'))
     km('n', lead('D'), lb.declaration, opts('Goto Decleration'))
@@ -39,6 +49,15 @@ local function attach_handle(_, bufnr)
     km('n', 'gl', diagnostic.open_float, opts('Diagnostic Float'))
     km('n', '[d', diagnostic.goto_prev, opts('Goto Prev Diagnostic'))
     km('n', ']d', diagnostic.goto_next, opts('Goto Next Diagnostic'))
+    -- vim.cmd([[
+    --     augroup LspCursorHighlight
+    --         autocmd!
+    --         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+    --         autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
+    --         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+    --         autocmd CursorMovedI <buffer> lua vim.lsp.buf.clear_references()
+    --     augroup END
+    -- ]])
 end
 
 local function lsp_zero_config()
