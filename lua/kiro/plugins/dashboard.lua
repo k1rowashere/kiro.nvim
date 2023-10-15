@@ -1,25 +1,23 @@
 return {
-    'k1rowashere/dashboard-nvim',
+    -- 'k1rowashere/dashboard-nvim',
+    'nvimdev/dashboard-nvim',
     lazy = false,
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-        'rmagatti/auto-session',
-    },
+    dependencies = 'nvim-tree/nvim-web-devicons',
     opts = {
         theme = 'hyper',
         config = {
             shortcut = {
-                -- {
-                --     icon = '󰦛',
-                --     desc = 'Restore Session',
-                --     key = 'r',
-                --     action = function()
-                --         vim.cmd('SessionRestore')
-                --     end
-                -- },-
+                {
+                    icon = '󰦛',
+                    desc = 'Last Session',
+                    key = 'r',
+                    action = function()
+                        require('session_manager').load_last_session(true)
+                    end,
+                },
                 {
                     icon = '',
-                    desc = 'File Browser',
+                    desc = 'Files',
                     key = 'e',
                     action = function()
                         vim.cmd('enew')
@@ -28,10 +26,10 @@ return {
                 },
                 {
                     icon = '󱝩',
-                    desc = 'Search Sessions',
-                    key = 'p',
+                    desc = 'Load Session',
+                    key = 's',
                     action = function()
-                        require('auto-session.session-lens').search_session()
+                        require('session_manager').load_session()
                     end,
                 },
                 {
@@ -45,17 +43,16 @@ return {
             },
             project = {
                 action = function(path)
-                    local as = require('auto-session')
-                    local sessions = as.get_session_files()
-                    local session_paths = {}
-                    for _, session in pairs(sessions) do
-                        table.insert(session_paths, session.display_name)
+                    local su = require('session_manager.utils')
+                    local sc = require('session_manager.config')
+                    local curr = sc.dir_to_session_filename(path).filename
+                    for _, session in ipairs(su.get_sessions()) do
+                        if session.filename == curr then
+                            su.load_session(session.filename, false)
+                            return
+                        end
                     end
-                    if vim.tbl_contains(session_paths, path) then
-                        as.RestoreSession(path)
-                    else
-                        vim.cmd('Telescope find_files cwd=' .. path)
-                    end
+                    vim.cmd('Telescope find_files cwd=' .. path)
                 end,
             },
             footer = {},
