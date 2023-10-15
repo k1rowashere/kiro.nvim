@@ -18,9 +18,10 @@ local vgit_keymaps = {
 }
 
 return {
-    { 'tpope/vim-fugitive', enabled = false, cmd = 'Git' },
+    { 'tpope/vim-fugitive', cmd = 'Git' },
     {
         'tanvirtin/vgit.nvim',
+        enabled = false,
         dependencies = {
             'nvim-lua/plenary.nvim',
             'nvim-tree/nvim-web-devicons',
@@ -29,7 +30,7 @@ return {
     },
     {
         'lewis6991/gitsigns.nvim',
-        enabled = false,
+        enabled = true,
         event = 'VeryLazy',
         opts = {
             on_attach = function(bufnr)
@@ -42,7 +43,7 @@ return {
                 end
 
                 -- Navigation
-                map('n', ']c', function()
+                map('n', ']h', function()
                     if vim.wo.diff then return ']c' end
                     vim.schedule(function() gs.next_hunk() end)
                     return '<Ignore>'
@@ -51,7 +52,7 @@ return {
                     desc = 'Next Hunk',
                 })
 
-                map('n', '[c', function()
+                map('n', '[h', function()
                     if vim.wo.diff then return '[c' end
                     vim.schedule(function() gs.prev_hunk() end)
                     return '<Ignore>'
