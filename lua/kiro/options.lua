@@ -61,5 +61,7 @@ vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
 vim.o.mousemev = true
 
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,'
+-- vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,'
+--     .. 'tabpages,winsize,winpos,terminal,localoptions'
+vim.o.sessionoptions = 'blank,buffers,curdir,help,'
     .. 'tabpages,winsize,winpos,terminal,localoptions'

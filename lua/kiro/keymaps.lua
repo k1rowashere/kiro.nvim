@@ -9,41 +9,14 @@ vim.g.mapleader = ' '
 -- Disable <F1> key
 km({ 'n', 'i' }, '<F1>', '<nop>')
 
-km('i', '<C-Del>', '<esc>dei', opts())
-
--- Shift Select
-km('i', '<S-Up>', '<Esc>v<Up>', opts())
-km('n', '<S-Up>', 'v<Up>', opts())
-km('n', '<S-Down>', 'v<Down>', opts())
-km('n', '<S-Left>', 'v<Left>', opts())
-km('n', '<S-Right>', 'v<Right>', opts())
-km('v', '<S-Up>', '<Up>', opts())
-km('v', '<S-Down>', '<Down>', opts())
-km('v', '<S-Left>', '<Left>', opts())
-km('v', '<S-Right>', '<Right>', opts())
-km('i', '<S-Down>', '<Esc>v<Down>', opts())
-km('i', '<S-Left>', '<Esc>v<Left>', opts())
-km('i', '<S-Right>', '<Esc>v<Right>', opts())
-
-km('n', '<C-S-Up>', 'v<Up>', opts())
-km('n', '<C-S-Down>', 'v<Down>', opts())
-km('n', '<C-S-Left>', 'v<C-Left>', opts())
-km('n', '<C-S-Right>', 'v<C-Right>', opts())
-km('v', '<C-S-Up>', '<Up>', opts())
-km('v', '<C-S-Down>', '<Down>', opts())
-km('v', '<C-S-Left>', '<Left>', opts())
-km('v', '<C-S-Right>', '<Right>', opts())
-km('i', '<C-S-Up>', '<Esc>v<Up>', opts())
-km('i', '<C-S-Down>', '<Esc>v<Down>', opts())
-km('i', '<C-S-Left>', '<Esc>v<C-Left>', opts())
-km('i', '<C-S-Right>', '<Esc>v<C-Right>', opts())
-
 km('n', '<esc>', vim.cmd.noh, opts())
 
--- keymap('x', '<leader>p', [["_dP]])
--- keymap({ 'n', 'v' }, '<leader>d', [["_d]])
+-- Register stuff
+km('x', '<leader>p', [["_dP]], opts('Paste Over'))
+km({ 'n', 'v', 'x' }, '<leader>v', '"_', opts('Void Register'))
+km({ 'n', 'v', 'x' }, '<leader>c', '"+', opts('System Clipboard'))
 
--- tab navigation
+-- Bufferline Navigation
 km('n', '<leader><Tab>', '<cmd>BufferLineCycleNext<CR>', opts('Next Buffer'))
 km('n', '<leader><S-Tab>', '<cmd>BufferLineCyclePrev<CR>', opts('Prev Buffer'))
 for i = 1, 9, 1 do
@@ -58,6 +31,8 @@ km('n', '<leader><leader>', '<cmd>BufferLinePick<CR>', opts('Goto Buffer'))
 
 -- close buffer
 km('n', '<leader>q', '<cmd>bd<CR>', opts('Close Buffer'))
+km('n', '<leader>!q', '<cmd>bd!<CR>', opts('Force Close Buffer'))
+km('n', '<leader>wq', '<cmd>w<CR><cmd>bd<CR>', opts('Write then Close Buffer'))
 
 -- Better window navigation
 km('n', '<A-Left>', '<C-w>h', opts())
@@ -65,6 +40,13 @@ km('n', '<A-Down>', '<C-w>j', opts())
 km('n', '<A-Up>', '<C-w>k', opts())
 km('n', '<A-Right>', '<C-w>l', opts())
 
+-- Telescope
+km(
+    'n',
+    '<leader>F',
+    function() require('telescope.builtin').builtin() end,
+    opts('Telescope Builtin')
+)
 km(
     'n',
     '<leader>ff',
@@ -92,9 +74,22 @@ km(
 km(
     'n',
     '<leader>fs',
-    function() require('auto-session.session-lens').search_session() end,
+    function() require('session_manager').load_session(true) end,
     opts('Session Search')
 )
+-- Open Snippets folder in telescope
+km(
+    'n',
+    '<leader>/s',
+    function()
+        require('telescope.builtin').find_files({
+            cwd = vim.fn.stdpath('config') .. '/snippets',
+        })
+    end,
+    opts('Find Snippets')
+)
+
+-- Menus and Stuff
 km(
     'n',
     '<leader>e',
