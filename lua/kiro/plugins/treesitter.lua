@@ -46,6 +46,13 @@ return {
             'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons',
         },
-        opts = {},
+        opts = {
+            layout = {
+                default_direction = 'left',
+                placement = 'edge',
+                width = 35,
+            },
+            close_on_select = true,
+        },
     },
 }

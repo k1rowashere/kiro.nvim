@@ -120,7 +120,7 @@ km(
     function() require('ts-node-action').node_action() end,
     opts('Run Node Action')
 )
-km('n', '<leader>a', '<cmd>AerialNavToggle<CR>')
+km('n', '<leader>a', '<cmd>AerialToggle<CR>')
 km(
     'n',
     '<F29>',
