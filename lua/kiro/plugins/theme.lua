@@ -2,9 +2,49 @@ local function color(colorscheme)
     vim.cmd.set('termguicolors')
     vim.cmd.colorscheme(colorscheme)
 
-    -- Custom highlights
-    vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
-    vim.api.nvim_set_hl(0, 'TSContext', { bg = '#181826' })
+    local hl = function(name, val) vim.api.nvim_set_hl(0, name, val) end
+    local cmp = 'CmpItem'
+
+    hl('PmenuSel', { bg = '#282C34', fg = 'NONE' })
+    hl('Pmenu', { fg = '#C5CDD9', bg = '#22252A' })
+    local fg = '#EEEEEE'
+    local val = function(bg) return { fg = fg, bg = bg } end
+
+    hl(
+        cmp .. 'AbbrDeprecated',
+        { fg = '#7E8294', bg = 'NONE', strikethrough = true }
+    )
+    hl(cmp .. 'AbbrMatch', { fg = '#82AAFF', bg = 'NONE', bold = true })
+    hl(cmp .. 'AbbrMatchFuzzy', { fg = '#82AAFF', bg = 'NONE', bold = true })
+    hl(cmp .. 'Menu', { fg = '#C792EA', bg = 'NONE', italic = true })
+    hl(cmp .. 'KindCopilot', val('#6CC644'))
+    hl(cmp .. 'KindField', val('#B5585F'))
+    hl(cmp .. 'KindProperty', val('#B5585F'))
+    hl(cmp .. 'KindEvent', val('#B5585F'))
+    hl(cmp .. 'KindText', val('#9FBD73'))
+    hl(cmp .. 'KindEnum', val('#9FBD73'))
+    hl(cmp .. 'KindKeyword', val('#9FBD73'))
+    hl(cmp .. 'KindConstant', val('#D4BB6C'))
+    hl(cmp .. 'KindConstructor', val('#D4BB6C'))
+    hl(cmp .. 'KindReference', val('#D4BB6C'))
+    hl(cmp .. 'KindFunction', val('#A377BF'))
+    hl(cmp .. 'KindStruct', val('#A377BF'))
+    hl(cmp .. 'KindClass', val('#A377BF'))
+    hl(cmp .. 'KindModule', val('#A377BF'))
+    hl(cmp .. 'KindOperator', val('#A377BF'))
+    hl(cmp .. 'KindVariable', val('#7E8294'))
+    hl(cmp .. 'KindFile', val('#7E8294'))
+    hl(cmp .. 'KindUnit', val('#D4A959'))
+    hl(cmp .. 'KindSnippet', val('#D4A959'))
+    hl(cmp .. 'KindFolder', val('#D4A959'))
+    hl(cmp .. 'KindMethod', val('#6C8ED4'))
+    hl(cmp .. 'KindValue', val('#6C8ED4'))
+    hl(cmp .. 'KindEnumMember', val('#6C8ED4'))
+    hl(cmp .. 'KindInterface', val('#58B5A8'))
+    hl(cmp .. 'KindColor', val('#58B5A8'))
+    hl(cmp .. 'KindTypeParameter', val('#58B5A8'))
+
+    hl('TSContext', { bg = '#181826' })
 end
 
 return {

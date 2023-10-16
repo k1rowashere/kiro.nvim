@@ -24,37 +24,6 @@ vim.o.splitbelow = true
 -- scroll options
 vim.o.scrolloff = 10
 
-vim.g.dap_buffers = {
-    'dap-repl',
-    'dapui_scopes',
-    'dapui_breakpoints',
-    'dapui_stacks',
-    'dapui_watches',
-    'dapui_console',
-}
-
--- Special windows/buffers
-vim.g.non_file_buffers = {
-    'NvimTree',
-    'packer',
-    'Trouble',
-    'dashboard',
-    'help',
-    'man',
-    'undotree',
-    'diff',
-    '',
-}
-
-vim.tbl_extend('keep', vim.g.non_file_buffers, vim.g.dap_buffers)
-
-vim.g.lualine_disabled_filetypes = {
-    'packer',
-    'dashboard',
-    'undotree',
-    'diff',
-}
-
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 

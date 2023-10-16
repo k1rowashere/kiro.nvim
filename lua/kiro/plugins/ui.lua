@@ -7,7 +7,7 @@ return {
         main = 'ibl',
         opts = {
             scope = { enabled = true },
-            exclude = { filetypes = vim.g.non_file_buffers },
+            exclude = { filetypes = { 'dashboard', 'undotree' } },
         },
     },
     {

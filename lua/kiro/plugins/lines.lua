@@ -2,7 +2,7 @@ local lualine_opts = {
     options = {
         theme = 'auto',
         disabled_filetypes = {
-            statusline = vim.g.lualine_disabled_filetypes,
+            statusline = { 'dashboard', 'undotree' },
         },
         refresh = { statusline = 100 },
     },
@@ -51,6 +51,8 @@ local lualine_opts = {
         'trouble',
         'nvim-dap-ui',
         'toggleterm',
+        'aerial',
+        'lazy',
     },
 }
 
@@ -95,6 +97,12 @@ return {
                         text_align = 'left',
                         separator = true,
                     },
+                    {
+                        filetype = 'aerial',
+                        text = '',
+                        text_align = 'left',
+                        separator = true,
+                    },
                 },
                 numbers = 'ordinal',
                 diagnostics = 'nvim_lsp',
@@ -128,38 +136,6 @@ return {
             'arkav/lualine-lsp-progress',
         },
         opts = lualine_opts,
-    },
-    {
-        'luukvbaal/statuscol.nvim',
-        enabled = false,
-        -- event = 'BufEnter *?',
-        dependencies = { 'gitsigns.nvim', 'nvim-dap' },
-        config = function()
-            local builtin = require('statuscol.builtin')
-            require('statuscol').setup({
-                relculright = true,
-                ft_ignore = vim.g.non_file_buffers,
-                segments = {
-                    {
-                        sign = {
-                            name = { '.*' },
-                            text = { '.*' },
-                            namespace = { '.*' },
-
-                            maxwidth = 1,
-                            fillchar = ' ',
-                        },
-                        click = 'v:lua.ScSa',
-                    },
-                    {
-                        text = { builtin.lnumfunc, ' ' },
-                        condition = { true, builtin.not_empty },
-                        click = 'v:lua.ScLa',
-                    },
-                    { text = { builtin.foldfunc, ' ' }, click = 'v:lua.ScFa' },
-                },
-            })
-        end,
     },
     {
         'utilyre/barbecue.nvim',
