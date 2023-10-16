@@ -84,36 +84,6 @@ local function lsp_zero_config()
         },
     })
 
-    lsp.format_on_save({
-        format_opts = {
-            async = true,
-            timeout_ms = 10000,
-        },
-        servers = {
-            ['rust_analyzer'] = { 'rust' },
-            ['clangd'] = { 'c', 'cpp', 'cs', 'cuda', 'proto' },
-            ['null-ls'] = {
-                -- prettier
-                'angular',
-                'css',
-                'flow',
-                'graphql',
-                'html',
-                'json',
-                'jsx',
-                'javascript',
-                'less',
-                'markdown',
-                'scss',
-                'typescript',
-                'vue',
-                'yaml',
-                -- stylua
-                'lua',
-            },
-        },
-    })
-
     lsp.extend_lspconfig({
         capabilities = {
             textDocument = {
@@ -142,7 +112,6 @@ return {
             { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
-            { 'jose-elias-alvarez/null-ls.nvim' },
         },
         config = lsp_zero_config,
     },
