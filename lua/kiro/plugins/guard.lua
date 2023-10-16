@@ -10,7 +10,7 @@ return {
             'angular,css,flow,graphql,html,json,jsx,javascript'
                 .. ',less,markdown,scss,typescript,vue,yaml'
         ):fmt('prettier'):extra('--tab-width 4')
-        ft('lua'):fmt('stylua')
+        ft('lua'):fmt('stylua'):extra('-s')
         ft('rust'):fmt('rustfmt')
 
         require('guard').setup(opts)

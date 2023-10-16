@@ -1,15 +1,11 @@
 local lspconfig = require('lspconfig')
+local lsp = require('lsp-zero')
 
-lspconfig.lua_ls.setup({
+lspconfig.lua_ls.setup(vim.tbl_extend('force', lsp.nvim_lua_ls(), {
     settings = {
         Lua = {
-            completion = {
-                callSnippet = 'Replace',
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim' },
-            },
+            completion = { callSnippet = 'Replace' },
+            diagnostics = { globals = { 'vim' } },
             workspace = {
                 -- Make the server aware of Neovim runtime files
                 library = vim.api.nvim_get_runtime_file('', true),
@@ -17,8 +13,7 @@ lspconfig.lua_ls.setup({
             },
         },
     },
-})
-
+}))
 
 lspconfig.rust_analyzer.setup({
     settings = {
@@ -44,7 +39,6 @@ lspconfig.tailwindcss.setup({
     },
 })
 
---Enable (broadcasting) snippet capability for completion
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
