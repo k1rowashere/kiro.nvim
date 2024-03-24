@@ -1,12 +1,8 @@
 local has_words_before = function()
-    if vim.api.nvim_get_option_value('buftype', { buf = 0 }) == 'prompt' then
-        return false
-    end
+    if vim.api.nvim_get_option_value('buftype', { buf = 0 }) == 'prompt' then return false end
     local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
     return col ~= 0
-        and vim.api
-                .nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]
-                :match('^%s*$')
+        and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match('^%s*$')
             == nil
 end
 
@@ -69,11 +65,8 @@ return {
                         maxwidth = 50,
                         symbol_map = { Copilot = '' },
                     })(entry, vim_item)
-                    if entry.source.name == 'calc' then
-                        vim_item.kind = '󰃬 text'
-                    end
-                    local strings =
-                        vim.split(kind.kind, '%s', { trimempty = true })
+                    if entry.source.name == 'calc' then vim_item.kind = '󰃬 text' end
+                    local strings = vim.split(kind.kind, '%s', { trimempty = true })
                     kind.kind = ' ' .. (strings[1] or '') .. ' '
                     kind.menu = '    (' .. (strings[2] or '') .. ')'
 
@@ -100,23 +93,22 @@ return {
                 ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
                 ['<CR>'] = cmp.mapping.confirm({ select = false }),
                 ['<C-Space>'] = cmp_action.toggle_completion(),
+                ['<C-u>'] = cmp.mapping.scroll_docs(-1),
+                ['<C-d>'] = cmp.mapping.scroll_docs(1),
             }),
             sources = {
-                { name = 'copilot', group_index = 2 },
-                { name = 'nvim_lsp', group_index = 2 },
-                { name = 'luasnip', group_index = 2 },
-                { name = 'buffer', group_index = 3 },
-                { name = 'path', group_index = 2 },
-                { name = 'calc', group_index = 2 },
+                { name = 'copilot' },
+                { name = 'nvim_lsp' },
+                { name = 'luasnip' },
+                { name = 'buffer' },
+                { name = 'path' },
+                { name = 'calc' },
             },
             experimental = { ghost_text = true },
         }
         cmp.setup(opts)
 
-        cmp.event:on(
-            'confirm_done',
-            require('nvim-autopairs.completion.cmp').on_confirm_done()
-        )
+        cmp.event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
 
         cmp.setup.filetype('gitcommit', {
             sources = cmp.config.sources({
@@ -128,10 +120,7 @@ return {
 
         cmp.setup.cmdline(':', {
             mapping = cmp.mapping.preset.cmdline(),
-            sources = cmp.config.sources(
-                { { name = 'path' } },
-                { { name = 'cmdline' } }
-            ),
+            sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
             window = {
                 completion = cmp.config.window.bordered(),
             },

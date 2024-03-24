@@ -5,6 +5,8 @@ local lualine_opts = {
             statusline = { 'dashboard', 'undotree' },
         },
         refresh = { statusline = 100 },
+        section_separators = { left = '', right = '' },
+        component_separators = { left = '', right = '' },
     },
     sections = {
         lualine_a = { 'mode' },
@@ -57,10 +59,8 @@ local lualine_opts = {
 }
 
 local function rm_devicon_bg(element)
-    local icon, hl = require('nvim-web-devicons').get_icon_by_filetype(
-        element.filetype,
-        { default = false }
-    )
+    local icon, hl =
+        require('nvim-web-devicons').get_icon_by_filetype(element.filetype, { default = false })
     if hl and vim.g.transparent_enabled then
         vim.cmd('highlight BufferLine' .. hl .. ' guibg=none')
     end
@@ -99,7 +99,7 @@ return {
                     },
                     {
                         filetype = 'aerial',
-                        text = '',
+                        text = 'Aerial',
                         text_align = 'left',
                         separator = true,
                     },
@@ -110,8 +110,7 @@ return {
             },
         },
         config = function(_, opts)
-            local highlights =
-                require('catppuccin.groups.integrations.bufferline').get()
+            local highlights = require('catppuccin.groups.integrations.bufferline').get()
 
             opts.highlights = vim.tbl_extend('force', highlights(), {
                 buffer_selected = { bg = 'none' },

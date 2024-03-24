@@ -1,6 +1,4 @@
-local opts = function(desc)
-    return { noremap = true, silent = true, desc = desc }
-end
+local opts = function(desc) return { noremap = true, silent = true, desc = desc } end
 
 local km = vim.keymap.set
 
@@ -47,24 +45,9 @@ km(
     function() require('telescope.builtin').builtin() end,
     opts('Telescope Builtin')
 )
-km(
-    'n',
-    '<leader>ff',
-    function() require('telescope.builtin').find_files() end,
-    opts('Find Files')
-)
-km(
-    'n',
-    '<leader>fb',
-    function() require('telescope.builtin').buffers() end,
-    opts('Find Buffer')
-)
-km(
-    'n',
-    '<leader>fg',
-    function() require('telescope.builtin').live_grep() end,
-    opts('Live Grep')
-)
+km('n', '<leader>ff', function() require('telescope.builtin').find_files() end, opts('Find Files'))
+km('n', '<leader>fb', function() require('telescope.builtin').buffers() end, opts('Find Buffer'))
+km('n', '<leader>fg', function() require('telescope.builtin').live_grep() end, opts('Live Grep'))
 km(
     'n',
     '<leader>fc',
@@ -90,30 +73,10 @@ km(
 )
 
 -- Menus and Stuff
-km(
-    'n',
-    '<leader>e',
-    function() require('nvim-tree.api').tree.toggle() end,
-    opts('Toggle Nvimtree')
-)
-km(
-    'n',
-    '<leader>d',
-    function() require('trouble').toggle() end,
-    opts('Toggle Diagnostics')
-)
-km(
-    'n',
-    '<leader>u',
-    '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>',
-    opts('Toggle Undotree')
-)
-km(
-    'n',
-    '<leader>m',
-    function() require('codewindow').toggle_minimap() end,
-    opts('Toggle Minimap')
-)
+km('n', '<leader>e', function() require('nvim-tree.api').tree.toggle() end, opts('Toggle Nvimtree'))
+km('n', '<leader>d', function() require('trouble').toggle() end, opts('Toggle Diagnostics'))
+km('n', '<leader>u', '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>', opts('Toggle Undotree'))
+km('n', '<leader>m', function() require('codewindow').toggle_minimap() end, opts('Toggle Minimap'))
 km(
     'n',
     '<leader>na',
@@ -121,12 +84,7 @@ km(
     opts('Run Node Action')
 )
 km('n', '<leader>a', '<cmd>AerialToggle<CR>')
-km(
-    'n',
-    '<F29>',
-    function() require('dapui').toggle() end,
-    opts('Start Debugging')
-)
+km('n', '<F29>', function() require('dapui').toggle() end, opts('Start Debugging'))
 km(
     'v',
     '<leader>rr',

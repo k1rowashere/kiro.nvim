@@ -11,7 +11,7 @@ return {
                 .. ',less,markdown,scss,typescript,vue,yaml'
         ):fmt('prettier'):extra('--tab-width 4')
         ft('lua'):fmt('stylua'):extra('-s')
-        ft('rust'):fmt('rustfmt')
+        ft('rust'):fmt('lsp')
 
         require('guard').setup(opts)
     end,

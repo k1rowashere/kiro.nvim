@@ -3,7 +3,6 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim' },
     lazy = false,
     opts = {
-        autoload_mode = 'CurrentDir',
         autosave_last_session = true,
         autosave_ignore_not_normal = true,
         autosave_ignore_dirs = { '~' },
@@ -16,16 +15,17 @@ return {
         autosave_only_in_session = false,
         max_path_length = 80,
     },
+    config = function(_, opts)
+        opts.autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
+        require('session_manager').setup(opts)
+    end,
     init = function()
         -- Auto save session
         vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
             callback = function()
                 for _, buf in ipairs(vim.api.nvim_list_bufs()) do
                     -- Don't save while there's any 'nofile' buffer open.
-                    if
-                        vim.api.nvim_get_option_value('buftype', { buf = buf })
-                        == 'nofile'
-                    then
+                    if vim.api.nvim_get_option_value('buftype', { buf = buf }) == 'nofile' then
                         return
                     end
                 end

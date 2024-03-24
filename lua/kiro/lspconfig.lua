@@ -26,6 +26,14 @@ lspconfig.rust_analyzer.setup({
                     enable = 'always',
                 },
             },
+            procMacro = {
+                ignored = {
+                    leptos_macro = {
+                        'component',
+                        'server',
+                    },
+                },
+            },
         },
     },
 })
@@ -37,6 +45,14 @@ lspconfig.tailwindcss.setup({
             rust = 'html',
         },
     },
+    root_dir = function(fname)
+        local root_pattern = require('lspconfig').util.root_pattern(
+            'tailwind.config.cjs',
+            'tailwind.config.js',
+            'postcss.config.js'
+        )
+        return root_pattern(fname)
+    end,
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
