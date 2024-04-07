@@ -4,16 +4,14 @@ local function color(colorscheme)
 
     local hl = function(name, val) vim.api.nvim_set_hl(0, name, val) end
     local cmp = 'CmpItem'
-
-    hl('PmenuSel', { bg = '#282C34', fg = 'NONE' })
-    hl('Pmenu', { fg = '#C5CDD9', bg = '#22252A' })
     local fg = '#EEEEEE'
     local val = function(bg) return { fg = fg, bg = bg } end
+    -- swap bg and fg
 
-    hl(
-        cmp .. 'AbbrDeprecated',
-        { fg = '#7E8294', bg = 'NONE', strikethrough = true }
-    )
+    hl('PmenuSel', { fg = '#282C34', bg = 'NONE' })
+    hl('Pmenu', { fg = '#C5CDD9', bg = '#22252A' })
+
+    hl(cmp .. 'AbbrDeprecated', { fg = '#7E8294', bg = 'NONE', strikethrough = true })
     hl(cmp .. 'AbbrMatch', { fg = '#82AAFF', bg = 'NONE', bold = true })
     hl(cmp .. 'AbbrMatchFuzzy', { fg = '#82AAFF', bg = 'NONE', bold = true })
     hl(cmp .. 'Menu', { fg = '#C792EA', bg = 'NONE', italic = true })

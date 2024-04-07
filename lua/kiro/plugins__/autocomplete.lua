@@ -77,20 +77,20 @@ return {
                 expand = function(args) luasnip.lsp_expand(args.body) end,
             },
             mapping = cmp.mapping.preset.insert({
-                ['<Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item({
-                            behavior = cmp.SelectBehavior.Insert,
-                        })
-                    elseif luasnip.expand_or_jumpable() then
-                        luasnip.expand_or_jump()
-                    elseif has_words_before() then
-                        cmp.complete()
-                    else
-                        fallback()
-                    end
-                end, { 'i', 's' }),
-                ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+                -- ['<Tab>'] = cmp.mapping(function(fallback)
+                --     if cmp.visible() then
+                --         cmp.select_next_item({
+                --             behavior = cmp.SelectBehavior.Insert,
+                --         })
+                --     elseif luasnip.expand_or_jumpable() then
+                --         luasnip.expand_or_jump()
+                --     elseif has_words_before() then
+                --         cmp.complete()
+                --     else
+                --         fallback()
+                --     end
+                -- end, { 'i', 's' }),
+                -- ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
                 ['<CR>'] = cmp.mapping.confirm({ select = false }),
                 ['<C-Space>'] = cmp_action.toggle_completion(),
                 ['<C-u>'] = cmp.mapping.scroll_docs(-1),

@@ -6,6 +6,9 @@ vim.o.undofile = true
 vim.o.swapfile = false
 vim.o.updatetime = 300
 
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
+
 -- tab options
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
