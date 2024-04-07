@@ -6,25 +6,30 @@ return {
         opts = {
             transparent_background = true,
             integrations = {
-                -- indent_blankline = { scope_color = 'lavender' },
+                indent_blankline = { scope_color = 'lavender' },
+                mason = true,
                 -- aerial = true,
-                -- mason = true,
                 -- treesitter_context = true,
                 -- lsp_trouble = true,
             },
         },
-        config = function(_, opts)
-            require('catppuccin').setup(opts)
-            vim.cmd.colorscheme('catppuccin-mocha')
-        end,
+        init = function() vim.cmd('colorscheme catppuccin-mocha') end,
     },
-    { 'stevearc/oil.nvim', dependencies = 'nvim-tree/nvim-web-devicons', cmd = 'Oil', opts = {} },
+    {
+        'stevearc/oil.nvim',
+        dependencies = 'nvim-tree/nvim-web-devicons',
+        cmd = 'Oil',
+        opts = {
+            delete_to_trash = true,
+            skip_confirm_for_simple_edits = true,
+        }
+    },
     {
         'nvim-telescope/telescope.nvim',
         dependencies = 'nvim-lua/plenary.nvim',
         cmd = { 'Telescope' },
     },
-    { 'mbbill/undotree',   cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
+    { 'mbbill/undotree',           cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
     {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufEnter',
@@ -52,26 +57,37 @@ return {
         },
         main = 'nvim-treesitter.configs',
     },
+    { 'kevinhwang91/nvim-hlslens', opts = {} },
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        dependencies = 'nvim-treesitter/nvim-treesitter',
+        main = 'ibl',
+        opts = {}
+    },
+    {
+        'norcalli/nvim-colorizer.lua',
+        ft = { 'css', 'scss', 'javascript', 'html' },
+        cmd = { 'ColorizerToggle', 'ColorizerAttachToBuffer' },
+        opts = {
+            'scss',
+            'html',
+            css = { rgb_fn = true },
+            javascript = { no_names = true },
+        },
+    },
+    { 'lewis6991/satellite.nvim',         opts = {} },
+    {
+        'gorbit99/codewindow.nvim',
+        lazy = true,
+        dependencies = 'nvim-treesitter/nvim-treesitter',
+        opts = { z_index = 50 },
+    },
     -- lsp stuff
-    'neovim/nvim-lspconfig',
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
-    -- Autocomplete
-    -- 'ms-jpq/coq_nvim',
-    -- 'ms-jpq/coq.artifacts',
-    -- {
-    --     'ms-jpq/coq.thirdparty',
-    --     setup = function(_, _)
-    --         require("coq_3p") {
-    --             { src = "nvimlua", short_name = "nLUA", conf_only = true },
-    --             { src = "vimtex",  short_name = "vTEX" },
-    --             { src = "copilot", short_name = "COP",  accept_key = "<c-f>" },
-    --             { src = "codeium", short_name = "COD" }, }
-    --     end
-    -- },
+    { 'neovim/nvim-lspconfig' },
+    { 'williamboman/mason-lspconfig.nvim' },
+    { 'williamboman/mason.nvim',          opts = { ui = { border = 'rounded' } } },
     {
         'hrsh7th/nvim-cmp',
-        -- enabled = false,
         event = { 'InsertEnter', 'CmdlineEnter' },
         dependencies = {
             'onsails/lspkind.nvim',
@@ -87,15 +103,13 @@ return {
             { 'zbirenbaum/copilot-cmp', opts = {} },
             {
                 'L3MON4D3/LuaSnip',
-                config = function()
+                init = function()
                     require('luasnip.loaders.from_vscode').lazy_load({
-                        paths = './snippets',
-                        fix_pairs = true,
-                    })
+                        paths = './snippets' })
                 end,
             },
         },
-        config = require('kiro.config.auto_complete'),
+        init = require('kiro.config.auto_complete'),
     },
     -- {
     --     'folke/trouble.nvim',
@@ -122,77 +136,46 @@ return {
     --     ft = { 'markdown' },
     --     opts = {},
     -- },
-    -- {
-    --     'saecki/crates.nvim',
-    --     event = { 'BufRead Cargo.toml' },
-    --     -- WARN: 'null-ls' is archived and may break at any moment
-    --     dependencies = {
-    --         'nvim-lua/plenary.nvim',
-    --         'jose-elias-alvarez/null-ls.nvim',
-    --     },
-    --     opts = {
-    --         null_ls = { enabled = true },
-    --         src = { cmp = { enabled = true } },
-    --     },
-    --     init = init,
-    -- },
     {
         'Shatur/neovim-session-manager',
         dependencies = 'nvim-lua/plenary.nvim',
-        opts = { autosave_ignore_dirs = { '~' } },
-        config = function(_, opts)
-            opts.autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
-            require('session_manager').setup(opts)
-        end,
-        init = function()
-            -- Auto save session
-            vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-                callback = function()
-                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                        -- Don't save while there's any 'nofile' buffer open.
-                        if vim.api.nvim_get_option_value('buftype', { buf = buf }) == 'nofile' then
-                            return
-                        end
-                    end
-                    require('session_manager').save_current_session()
-                end,
-            })
+        opts = function()
+            return {
+                autosave_ignore_dirs = { '~' },
+                autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
+            }
         end,
     },
-    'tpope/vim-repeat',
+    -- Editing
+    { 'kylechui/nvim-surround', opts = {} },
+    { 'fedepujol/move.nvim',    cmd = 'MoveLine',      opts = {} },
+    { 'windwp/nvim-autopairs',  event = 'InsertEnter', opts = {} },
+    -- Fancy UI
+    { 'stevearc/dressing.nvim', event = 'VeryLazy',    opts = {} },
     {
-        'kylechui/nvim-surround',
-        config = true,
-        keys = { 'c', 'd', 'y',
-            { 'S', mode = 'x' } }
+        'folke/todo-comments.nvim',
+        event = 'BufEnter',
+        dependencies = 'nvim-lua/plenary.nvim',
+        opts = {},
     },
-    { 'fedepujol/move.nvim',    config = true },
-    { 'windwp/nvim-autopairs',  event = 'InsertEnter', config = true },
-    { 'stevearc/dressing.nvim', event = 'VeryLazy',    config = true },
     {
         'nvim-lualine/lualine.nvim',
         event = 'ColorScheme',
-        dependencies = {
-            'nvim-tree/nvim-web-devicons',
-            'arkav/lualine-lsp-progress',
-        },
+        dependencies = { 'nvim-tree/nvim-web-devicons', 'arkav/lualine-lsp-progress' },
         opts = require('kiro.config.lualine'),
     },
+
+    { 'akinsho/bufferline.nvim', dependencies = 'catppuccin',          opts = require('kiro.config.bufferline'), },
+    { 'utilyre/barbecue.nvim',   dependencies = 'SmiteshP/nvim-navic', opts = { theme = 'catppuccin-mocha' } },
     {
         'numToStr/Comment.nvim',
         keys = {
             { 'gc', mode = { 'x', 'n' }, desc = 'Toggle Line Comment' },
             { 'gb', mode = { 'x', 'n' }, desc = 'Toggle Block Comment' },
         },
-        config = true,
-    },
-    {
-        'folke/todo-comments.nvim',
-        event = 'BufEnter',
-        dependencies = 'nvim-lua/plenary.nvim',
-        config = true,
+        opts = {},
     },
     -- language specific
     { 'mrcjkb/rustaceanvim', ft = 'rust' },
-    { 'folke/neodev.nvim',   priority = 1000, config = true },
+    { 'folke/neodev.nvim',   priority = 1000, opts = {} },
 }

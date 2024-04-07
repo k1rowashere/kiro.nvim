@@ -6,7 +6,7 @@ return {
         },
         refresh = { statusline = 100 },
         section_separators = { left = '', right = '' },
-        component_separators = { left = '', right = '' },
+        component_separators = { left = '', right = '' },
     },
     sections = {
         lualine_a = { 'mode' },
@@ -38,11 +38,11 @@ return {
     extensions = {
         'fugitive',
         'quickfix',
-        'nvim-tree',
+        -- 'nvim-tree',
         'trouble',
         'nvim-dap-ui',
-        'toggleterm',
-        'aerial',
+        -- 'toggleterm',
+        -- 'aerial',
         'lazy',
     },
 }

@@ -13,8 +13,66 @@ km({ 'n', 'v', 'x' }, '<leader>v', '"_', opts('Void Register'))
 km({ 'n', 'v', 'x' }, '<leader>c', '"+', opts('System Clipboard'))
 
 -- Buffer Navigation
-km('n', '<leader><Tab>', '<cmd>bnext<CR>', opts('Next Buffer'))
-km('n', '<leader><S-Tab>', '<cmd>bprevious<CR>', opts('Prev Buffer'))
+-- if <leader> is held, then a tab will cycle through buffers
+local switch_held = false
+local timer = vim.uv.new_timer();
+local function restart_timer()
+    switch_held = true
+    if not timer:is_closing() then
+        timer:stop()
+        timer:close()
+    end
+    timer = vim.uv.new_timer()
+    timer:start(750, 0, function()
+        timer:stop()
+        timer:close()
+        switch_held = false
+    end)
+end
+km(
+    'n',
+    '<leader><tab>',
+    function()
+        vim.cmd('bnext')
+        restart_timer()
+    end,
+    opts('Cycle Buffers')
+)
+km(
+    'n',
+    '<leader><S-tab>',
+    function()
+        vim.cmd('bprevious')
+        restart_timer()
+    end,
+    opts('Cycle Buffers Reversed')
+)
+km(
+    'n',
+    '<tab>',
+    function()
+        if switch_held then
+            vim.cmd('bnext')
+            restart_timer()
+        end
+    end,
+    opts()
+)
+km(
+    'n',
+    '<S-tab>',
+    function()
+        if switch_held then
+            vim.cmd('bprevious')
+            restart_timer()
+        end
+    end,
+    opts()
+)
+
+for i = 1, 9 do
+    km('n', '<leader><leader>' .. i, '<cmd>BufferLineGoToBuffer' .. i .. '<CR>', opts('Goto Buffer ' .. i))
+end
 
 -- close buffer
 km('n', '<leader>q', '<cmd>bd<CR>', opts('Close Buffer'))
@@ -37,7 +95,25 @@ km(
 )
 km('n', '<leader>ff', function() tb().find_files() end, opts('Find Files'))
 km('n', '<leader>fb', function() tb().buffers() end, opts('Find Buffer'))
-km('n', '<leader>fg', function() tb().live_grep({ search_dirs = { '.' } }) end, opts('Live Grep'))
+km(
+    'n',
+    '<leader>fg',
+    function()
+        local function get_git_root()
+            local dot_git_path = vim.fn.finddir(".git", ".;")
+            return vim.fn.fnamemodify(dot_git_path, ":h")
+        end
+        -- if we are in a git repo, grep the root of the repo
+        -- otherwise grep the cwd
+        local git_root = get_git_root()
+        if git_root ~= "" then
+            tb().live_grep({ cwd = git_root })
+        else
+            tb().live_grep()
+        end
+    end,
+    opts('Grep Current Working Directory')
+)
 km(
     'n',
     '<leader>fc',
@@ -65,7 +141,7 @@ km(
 
 -- Menus and Stuff
 km('n', '<leader>e', function() require('oil').toggle_float() end, opts('Toggle Oil Window'))
-km('n', '<leader>E', function() require('oil').toggle_float(vim.loop.cwd()) end,
+km('n', '<leader>E', function() require('oil').toggle_float(vim.uv.cwd()) end,
     opts('Toggle Oil Window in Working Directory'))
 km('n', '<leader>d', function() require('trouble').toggle() end, opts('Toggle Diagnostics'))
 km('n', '<leader>u', '<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>', opts('Toggle Undotree'))

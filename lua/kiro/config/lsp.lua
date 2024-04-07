@@ -20,8 +20,6 @@ require('mason-lspconfig').setup_handlers({
     end,
 
     ['tailwindcss'] = function()
-        vim.list_extend(lspconfig.tailwindcss.filetypes, { 'rust' })
-
         lspconfig.tailwindcss.setup({
             init_options = {
                 userLanguages = {
@@ -37,6 +35,7 @@ require('mason-lspconfig').setup_handlers({
                 return root_pattern(fname)
             end,
         })
+        vim.list_extend(lspconfig.tailwindcss.filetypes, { 'rust' })
     end
 })
 
