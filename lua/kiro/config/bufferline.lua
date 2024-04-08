@@ -1,8 +1,14 @@
 return function()
+    local C = require('catppuccin.palettes').get_palette()
+    local hl = require('catppuccin.groups.integrations.bufferline').get()()
+    for _, color in pairs(hl) do
+        color.sp = C.peach
+    end
+
     return {
         options = {
-            separator_style = 'thin',
-            indicator = { icon = '▋' },
+            separator_style = { '', '' },
+            indicator = { style = 'underline' },
             diagnostics_indicator = function(count, _, _, _) return "(" .. count .. ")" end,
             hover = { enabled = true, delay = 200, reveal = { 'close' } },
             offsets = {
@@ -22,6 +28,6 @@ return function()
             numbers = 'ordinal',
             diagnostics = 'nvim_lsp',
         },
-        highlights = require("catppuccin.groups.integrations.bufferline").get()
+        highlights = function() return hl end
     }
 end

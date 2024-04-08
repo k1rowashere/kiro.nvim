@@ -6,7 +6,6 @@ return {
         opts = {
             transparent_background = true,
             integrations = {
-                indent_blankline = { scope_color = 'lavender' },
                 mason = true,
                 -- aerial = true,
                 -- treesitter_context = true,
@@ -15,6 +14,8 @@ return {
         },
         init = function() vim.cmd('colorscheme catppuccin-mocha') end,
     },
+
+    -- Navigation
     {
         'stevearc/oil.nvim',
         dependencies = 'nvim-tree/nvim-web-devicons',
@@ -22,6 +23,7 @@ return {
         opts = {
             delete_to_trash = true,
             skip_confirm_for_simple_edits = true,
+            win_options = { signcolumn = 'auto:2' }
         }
     },
     {
@@ -29,40 +31,55 @@ return {
         dependencies = 'nvim-lua/plenary.nvim',
         cmd = { 'Telescope' },
     },
-    { 'mbbill/undotree',           cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
+    { 'mbbill/undotree',                  cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
+
+    -- Git
+    { "refractalize/oil-git-status.nvim", dependencies = "stevearc/oil.nvim",        opts = {} },
+
+
+
+    -- Highlights and Indentation
+    {
+        'shellRaining/hlchunk.nvim',
+        event = 'UiEnter',
+        opts = {
+            indent = { chars = { '' } },
+            blank = { enable = false },
+            line_num = { enable = false },
+            chunk = { style = { { fg = '#b4beff' }, { fg = '#f38ba9' } } }
+        }
+    },
+    {
+        'HiPhish/rainbow-delimiters.nvim',
+        main = 'rainbow-delimiters.setup',
+        opts = {
+            highlight = {
+                'RainbowDelimiterRed',
+                'RainbowDelimiterOrange',
+                'RainbowDelimiterYellow',
+                'RainbowDelimiterGreen',
+                'RainbowDelimiterCyan',
+                'RainbowDelimiterBlue',
+                'RainbowDelimiterViolet',
+            },
+
+        }
+    },
     {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufEnter',
+        main = 'nvim-treesitter.configs',
         opts = {
-            auto_install = true,
-            rainbow = {
-                enable = true,
-                disable = { 'NvimTree', 'packer' },
-                extended_mode = true,
-            },
-            highlight = {
-                enable = true,
-                disable = { 'NvimTree', 'packer' },
-                additional_vim_regex_highlighting = false,
-            },
             incremental_selection = {
                 enable = true,
                 keymaps = {
                     init_selection = '<M-w>',
                     node_incremental = '<M-w>',
-                    node_decremental = '<M-C-w>',
+                    node_decremental = '<M-W>',
                     scope_incremental = '<M-e>',
                 },
             },
         },
-        main = 'nvim-treesitter.configs',
-    },
-    { 'kevinhwang91/nvim-hlslens', opts = {} },
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        dependencies = 'nvim-treesitter/nvim-treesitter',
-        main = 'ibl',
-        opts = {}
     },
     {
         'norcalli/nvim-colorizer.lua',
@@ -76,12 +93,8 @@ return {
         },
     },
     { 'lewis6991/satellite.nvim',         opts = {} },
-    {
-        'gorbit99/codewindow.nvim',
-        lazy = true,
-        dependencies = 'nvim-treesitter/nvim-treesitter',
-        opts = { z_index = 50 },
-    },
+    { 'kevinhwang91/nvim-hlslens',        event = 'BufEnter',                    opts = {} },
+
     -- lsp stuff
     { 'neovim/nvim-lspconfig' },
     { 'williamboman/mason-lspconfig.nvim' },
@@ -146,18 +159,15 @@ return {
             }
         end,
     },
+
     -- Editing
-    { 'kylechui/nvim-surround', opts = {} },
-    { 'fedepujol/move.nvim',    cmd = 'MoveLine',      opts = {} },
-    { 'windwp/nvim-autopairs',  event = 'InsertEnter', opts = {} },
+    { 'kylechui/nvim-surround',   opts = {} },
+    { 'fedepujol/move.nvim',      cmd = 'MoveLine',      opts = {} },
+    { 'windwp/nvim-autopairs',    event = 'InsertEnter', opts = {} },
+
     -- Fancy UI
-    { 'stevearc/dressing.nvim', event = 'VeryLazy',    opts = {} },
-    {
-        'folke/todo-comments.nvim',
-        event = 'BufEnter',
-        dependencies = 'nvim-lua/plenary.nvim',
-        opts = {},
-    },
+    { 'stevearc/dressing.nvim',   event = 'VeryLazy',    opts = {} },
+    { 'folke/todo-comments.nvim', event = 'BufEnter',    dependencies = 'nvim-lua/plenary.nvim', opts = {} },
     {
         'nvim-lualine/lualine.nvim',
         event = 'ColorScheme',
@@ -175,6 +185,7 @@ return {
         },
         opts = {},
     },
+
     -- language specific
     { 'mrcjkb/rustaceanvim', ft = 'rust' },
     { 'folke/neodev.nvim',   priority = 1000, opts = {} },

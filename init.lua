@@ -1,11 +1,11 @@
 vim.loader.enable()
 vim.g.mapleader = ' '
 
-local uv = vim.uv or vim.loop
+UV = vim.uv or vim.loop
 
 -- init Lazy
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-if not uv.fs_stat(lazypath) then
+if not UV.fs_stat(lazypath) then
     vim.fn.system({
         'git',
         'clone',

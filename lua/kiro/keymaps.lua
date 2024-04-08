@@ -15,20 +15,26 @@ km({ 'n', 'v', 'x' }, '<leader>c', '"+', opts('System Clipboard'))
 -- Buffer Navigation
 -- if <leader> is held, then a tab will cycle through buffers
 local switch_held = false
-local timer = vim.uv.new_timer();
+local timer = UV.new_timer()
+
 local function restart_timer()
     switch_held = true
-    if not timer:is_closing() then
+
+    if timer and not timer:is_closing() then
         timer:stop()
         timer:close()
     end
-    timer = vim.uv.new_timer()
+
+    timer = UV.new_timer()
+    if not timer then return end
+
     timer:start(750, 0, function()
         timer:stop()
         timer:close()
         switch_held = false
     end)
 end
+
 km(
     'n',
     '<leader><tab>',
