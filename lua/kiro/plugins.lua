@@ -32,11 +32,33 @@ return {
         cmd = { 'Telescope' },
     },
     { 'mbbill/undotree',                  cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
+    {
+        'kevinhwang91/nvim-ufo',
+        dependencies = { 'kevinhwang91/promise-async' },
+        opts = {
+            open_fold_hl_timeout = 100,
+            fold_virt_text_handler = require('kiro.config.ufo').handler,
+        },
+        init = require('kiro.config.ufo').init,
+    },
 
     -- Git
     { "refractalize/oil-git-status.nvim", dependencies = "stevearc/oil.nvim",        opts = {} },
-
-
+    {
+        "NeogitOrg/neogit",
+        branch = 'nightly',
+        dependencies = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim", "nvim-telescope/telescope.nvim" },
+        cmd = 'Neogit',
+        opts = {}
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        event = 'BufEnter',
+        opts = {
+            on_attach = require('kiro.config.gitsigns').on_attach,
+            current_line_blame = true,
+        },
+    },
 
     -- Highlights and Indentation
     {
@@ -133,21 +155,6 @@ return {
     --             jump_close = { '<cr>' },
     --         },
     --     },
-    -- },
-    -- {
-    --     'akinsho/toggleterm.nvim',
-    --     keys = '<leader>t',
-    --     opts = {
-    --         size = 20,
-    --         open_mapping = '<leader>t',
-    --         insert_mappings = false,
-    --     },
-    -- },
-    -- {
-    --     'toppair/peek.nvim',
-    --     build = 'deno task --quiet build:fast',
-    --     ft = { 'markdown' },
-    --     opts = {},
     -- },
     {
         'Shatur/neovim-session-manager',

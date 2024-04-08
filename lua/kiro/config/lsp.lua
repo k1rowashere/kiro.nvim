@@ -2,17 +2,25 @@ require('mason').setup({})
 require('mason-lspconfig').setup()
 
 local lspconfig = require('lspconfig')
-
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
 
 require('mason-lspconfig').setup_handlers({
     -- default handler
-    function(server_name) lspconfig[server_name].setup({}) end,
+    function(server_name)
+        lspconfig[server_name].setup({ capabilities = capabilities })
+    end,
 
     ['rust_analyzer'] = function() end,
 
     ['lua_ls'] = function()
         lspconfig.lua_ls.setup({
+            capabilities = capabilities,
             settings = {
                 Lua = { diagnostics = { globals = { 'vim' } } },
             },

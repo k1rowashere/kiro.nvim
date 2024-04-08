@@ -146,6 +146,7 @@ km(
 )
 
 -- Menus and Stuff
+km('n', '<leader>g', '<CMD>Neogit<CR>', opts('Toggle Neogit'))
 km('n', '<leader>e', function() require('oil').toggle_float() end, opts('Toggle Oil Window'))
 km('n', '<leader>E', function() require('oil').toggle_float(vim.uv.cwd()) end,
     opts('Toggle Oil Window in Working Directory'))
