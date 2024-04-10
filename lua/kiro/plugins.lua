@@ -5,20 +5,25 @@ return {
         priority = 1000,
         opts = {
             transparent_background = true,
-            integrations = {
-                mason = true,
-                -- aerial = true,
-                -- treesitter_context = true,
-                -- lsp_trouble = true,
-            },
+            integrations = { mason = true },
         },
-        init = function() vim.cmd('colorscheme catppuccin-mocha') end,
+        init = function() vim.cmd.colorscheme('catppuccin-mocha') end,
+    },
+    { 'nvim-tree/nvim-web-devicons' },
+    {
+        'Shatur/neovim-session-manager',
+        dependencies = 'nvim-lua/plenary.nvim',
+        opts = function()
+            return {
+                autosave_ignore_dirs = { '~' },
+                autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
+            }
+        end,
     },
 
     -- Navigation
     {
         'stevearc/oil.nvim',
-        dependencies = 'nvim-tree/nvim-web-devicons',
         cmd = 'Oil',
         opts = {
             delete_to_trash = true,
@@ -29,9 +34,21 @@ return {
     {
         'nvim-telescope/telescope.nvim',
         dependencies = 'nvim-lua/plenary.nvim',
-        cmd = { 'Telescope' },
+        cmd = 'Telescope',
+        init = require('kiro.keymaps').telescope,
+        opts = function()
+            local trouble = require('trouble.providers.telescope')
+            return {
+                defaults = {
+                    mappings = {
+                        i = { ["<c-t>"] = trouble.open_with_trouble },
+                        n = { ["<c-t>"] = trouble.open_with_trouble },
+                    }
+                },
+            }
+        end
     },
-    { 'mbbill/undotree',                  cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
+    { 'mbbill/undotree',            cmd = { 'UndotreeOpen', 'UndotreeToggle' } },
     {
         'kevinhwang91/nvim-ufo',
         dependencies = { 'kevinhwang91/promise-async' },
@@ -39,23 +56,23 @@ return {
             open_fold_hl_timeout = 100,
             fold_virt_text_handler = require('kiro.config.ufo').handler,
         },
-        init = require('kiro.config.ufo').init,
+        config = require('kiro.config.ufo').config,
     },
 
     -- Git
-    { "refractalize/oil-git-status.nvim", dependencies = "stevearc/oil.nvim",        opts = {} },
+    { 'refractalize/oil-git-status.nvim', dependencies = 'stevearc/oil.nvim',    opts = {} },
     {
-        "NeogitOrg/neogit",
+        'NeogitOrg/neogit',
         branch = 'nightly',
-        dependencies = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim", "nvim-telescope/telescope.nvim" },
+        dependencies = { 'nvim-lua/plenary.nvim', 'sindrets/diffview.nvim', 'nvim-telescope/telescope.nvim' },
         cmd = 'Neogit',
         opts = {}
     },
     {
         'lewis6991/gitsigns.nvim',
-        event = 'BufEnter',
+        event = 'BufEnter *?',
         opts = {
-            on_attach = require('kiro.config.gitsigns').on_attach,
+            on_attach = require('kiro.keymaps').gitsigns,
             current_line_blame = true,
         },
     },
@@ -63,7 +80,7 @@ return {
     -- Highlights and Indentation
     {
         'shellRaining/hlchunk.nvim',
-        event = 'UiEnter',
+        event = 'BufEnter *?',
         opts = {
             indent = { chars = { '' } },
             blank = { enable = false },
@@ -115,7 +132,7 @@ return {
         },
     },
     { 'lewis6991/satellite.nvim',         opts = {} },
-    { 'kevinhwang91/nvim-hlslens',        event = 'BufEnter',                    opts = {} },
+    { 'kevinhwang91/nvim-hlslens',        keys = { '/', '?' },                   opts = {} },
 
     -- lsp stuff
     { 'neovim/nvim-lspconfig' },
@@ -129,61 +146,58 @@ return {
             'hrsh7th/cmp-buffer',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-calc',
+            'petertriho/cmp-git',
             'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-nvim-lsp',
-            'hrsh7th/cmp-nvim-lua',
             'saadparwaiz1/cmp_luasnip',
             'rafamadriz/friendly-snippets',
             { 'zbirenbaum/copilot.lua', opts = { suggestion = { enabled = false } } },
             { 'zbirenbaum/copilot-cmp', opts = {} },
             {
                 'L3MON4D3/LuaSnip',
-                init = function()
-                    require('luasnip.loaders.from_vscode').lazy_load({
-                        paths = './snippets' })
+                config = function()
+                    require('luasnip.loaders.from_vscode').lazy_load({ paths = './snippets' })
                 end,
             },
         },
-        init = require('kiro.config.auto_complete'),
+        config = require('kiro.config.auto_complete'),
     },
-    -- {
-    --     'folke/trouble.nvim',
-    --     lazy = true,
-    --     opts = {
-    --         action_keys = {
-    --             jump = { '<tab.', '<2-leftmouse>' },
-    --             jump_close = { '<cr>' },
-    --         },
-    --     },
-    -- },
+    -- TODO: Upgrade to beta
     {
-        'Shatur/neovim-session-manager',
-        dependencies = 'nvim-lua/plenary.nvim',
-        opts = function()
-            return {
-                autosave_ignore_dirs = { '~' },
-                autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
-            }
-        end,
+        'folke/trouble.nvim',
+        keys = {
+            { '<leader>td', '<cmd>TroubleToggle workspace_diagnostics<cr>', desc = 'Trouble Diagnostics' },
+            { '<leader>tt', '<cmd>TroubleToggle todo<cr>',                  desc = 'Trouble Todo' },
+        },
+        opts = {
+            focus = true,
+            position = 'right',
+            action_keys = { jump_close = { '<CR>' } },
+        },
     },
 
     -- Editing
     { 'kylechui/nvim-surround',   opts = {} },
-    { 'fedepujol/move.nvim',      cmd = 'MoveLine',      opts = {} },
-    { 'windwp/nvim-autopairs',    event = 'InsertEnter', opts = {} },
+    { 'fedepujol/move.nvim',      cmd = { 'MoveLine', 'MoveHBLock' }, opts = {} },
+    { 'windwp/nvim-autopairs',    event = 'InsertEnter',              opts = {} },
 
     -- Fancy UI
-    { 'stevearc/dressing.nvim',   event = 'VeryLazy',    opts = {} },
-    { 'folke/todo-comments.nvim', event = 'BufEnter',    dependencies = 'nvim-lua/plenary.nvim', opts = {} },
+    { 'stevearc/dressing.nvim',   event = 'VeryLazy',                 opts = {} },
+    { 'folke/todo-comments.nvim', event = 'BufEnter *?',              dependencies = 'nvim-lua/plenary.nvim', opts = {} },
     {
         'nvim-lualine/lualine.nvim',
-        event = 'ColorScheme',
-        dependencies = { 'nvim-tree/nvim-web-devicons', 'arkav/lualine-lsp-progress' },
+        event = 'BufEnter',
+        dependencies = 'arkav/lualine-lsp-progress',
         opts = require('kiro.config.lualine'),
     },
 
-    { 'akinsho/bufferline.nvim', dependencies = 'catppuccin',          opts = require('kiro.config.bufferline'), },
-    { 'utilyre/barbecue.nvim',   dependencies = 'SmiteshP/nvim-navic', opts = { theme = 'catppuccin-mocha' } },
+    { 'akinsho/bufferline.nvim', dependencies = 'catppuccin', opts = require('kiro.config.bufferline'), },
+    {
+        'utilyre/barbecue.nvim',
+        event = 'BufEnter *?',
+        dependencies = 'SmiteshP/nvim-navic',
+        opts = { theme = 'catppuccin-mocha' }
+    },
     {
         'numToStr/Comment.nvim',
         keys = {
@@ -194,6 +208,12 @@ return {
     },
 
     -- language specific
-    { 'mrcjkb/rustaceanvim', ft = 'rust' },
-    { 'folke/neodev.nvim',   priority = 1000, opts = {} },
+    { 'mrcjkb/rustaceanvim',     ft = 'rust' },
+    { 'folke/neodev.nvim',       ft = 'lua',                  opts = {} },
+    {
+        "luckasRanarison/tailwind-tools.nvim",
+        dependencies = "nvim-treesitter/nvim-treesitter",
+        event = 'VeryLazy',
+        opts = {}
+    },
 }

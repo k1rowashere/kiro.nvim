@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 return function()
     local cmp = require('cmp')
     local lspkind = require('lspkind')
@@ -20,8 +21,11 @@ return function()
                     mode = 'symbol_text',
                     maxwidth = 50,
                     symbol_map = { Copilot = '' },
+                    before = require("tailwind-tools.cmp").lspkind_format
                 })(entry, vim_item)
-                if entry.source.name == 'calc' then vim_item.kind = '󰃬 text' end
+
+                if entry.source.name == 'calc' then vim_item.kind = '󰃬 calc' end
+
                 local strings = vim.split(kind.kind, '%s', { trimempty = true })
                 kind.kind = ' ' .. (strings[1] or '') .. ' '
                 kind.menu = '    (' .. (strings[2] or '') .. ')'
@@ -29,9 +33,7 @@ return function()
                 return kind
             end,
         },
-        snippet = {
-            expand = function(args) luasnip.lsp_expand(args.body) end,
-        },
+        snippet = { expand = function(args) luasnip.lsp_expand(args.body) end, },
         mapping = cmp.mapping.preset.insert({
             ['<CR>'] = cmp.mapping.confirm({ select = false }),
             ['<C-u>'] = cmp.mapping.scroll_docs(-1),
@@ -57,27 +59,23 @@ return function()
     cmp.event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
 
     cmp.setup.filetype('gitcommit', {
-        sources = cmp.config.sources({
-            { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-        }, {
-            { name = 'buffer' },
-        }),
+        sources = cmp.config.sources(
+            { { name = 'git' } },
+            { { name = 'buffer' } }
+        ),
     })
 
     cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
-        window = {
-            completion = cmp.config.window.bordered(),
-        },
+        window = { completion = cmp.config.window.bordered(), },
         formatting = { fields = { 'abbr' } },
     })
+
     cmp.setup.cmdline({ '/', '?' }, {
         mapping = cmp.mapping.preset.cmdline(),
         sources = { { name = 'buffer' } },
-        window = {
-            completion = cmp.config.window.bordered(),
-        },
+        window = { completion = cmp.config.window.bordered(), },
         formatting = { fields = { 'abbr' } },
     })
 end
