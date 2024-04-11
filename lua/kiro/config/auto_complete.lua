@@ -34,16 +34,7 @@ return function()
             end,
         },
         snippet = { expand = function(args) luasnip.lsp_expand(args.body) end, },
-        mapping = cmp.mapping.preset.insert({
-            ['<CR>'] = cmp.mapping.confirm({ select = false }),
-            ['<C-u>'] = cmp.mapping.scroll_docs(-1),
-            ['<C-d>'] = cmp.mapping.scroll_docs(1),
-            ['C-Space'] = cmp.mapping.complete(),
-            ['<C-e>'] = cmp.mapping.close(),
-            ['<C-f>'] = cmp.mapping.confirm({ select = true }),
-            ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-            ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        }),
+        mapping = require('kiro.keymaps').cmp(cmp),
         sources = {
             { name = 'copilot' },
             { name = 'nvim_lsp' },
@@ -54,6 +45,7 @@ return function()
         },
         experimental = { ghost_text = true },
     }
+
     cmp.setup(opts)
 
     cmp.event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())

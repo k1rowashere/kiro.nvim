@@ -28,13 +28,10 @@ function M.handler(virtText, lnum, endLnum, width, truncate)
     return newVirtText
 end
 
-function M.config(_, opts)
-    require('ufo').setup(opts)
+function M.init()
     vim.o.foldlevel = 99
     vim.o.foldlevelstart = 99
     vim.o.foldenable = true
-
-    require('kiro.keymaps').ufo()
 end
 
 return M
