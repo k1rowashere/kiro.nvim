@@ -39,6 +39,7 @@ return {
                 keymaps = { ['q'] = 'actions.close' }
             }
         },
+        lazy = not vim.list_contains(vim.v.argv, '.'),
         cmd = 'Oil',
         keys = km.oil,
         opts = {}
