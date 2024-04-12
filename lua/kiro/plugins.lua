@@ -1,4 +1,3 @@
-local utils = require('kiro.utils')
 local km = require('kiro.keymaps')
 
 return {
@@ -20,15 +19,14 @@ return {
         keys = km.session_manager,
         opts = function()
             return {
-                autosave_ignore_dirs = { '~' },
+                autosave_ignore_dirs = { '~', '~/Downloads/**' },
                 autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
             }
         end,
     },
 
     -- Navigation
-    {
-        -- loading the plugins in this order is optimal for performance
+    { -- loading the plugins in this order is optimal for performance
         'refractalize/oil-git-status.nvim',
         dependencies = {
             'stevearc/oil.nvim',
@@ -48,61 +46,11 @@ return {
         'nvim-telescope/telescope.nvim',
         dependencies = {
             'nvim-lua/plenary.nvim',
-            {
-                'FabianWirth/search.nvim',
-                opts = function()
-                    local builtin = require('telescope.builtin')
-
-
-                    return {
-                        tabs = {},
-                        collections = {
-                            git = {
-                                tabs = {
-                                    {
-                                        'Commits',
-                                        builtin.git_commits,
-                                        available = function() return vim.fn.isdirectory('.git') end
-                                    },
-                                    { name = "Branches", tele_func = builtin.git_branches },
-                                }
-                            },
-                            files = {
-                                tabs = {
-                                    { 'Buffers',      tele_func = builtin.buffers },
-                                    { 'Files',        tele_func = builtin.find_files },
-                                    { 'Recent Files', tele_func = builtin.oldfiles },
-                                    {
-                                        'Grep',
-                                        tele_func = function()
-                                            if utils.is_git_repo() then
-                                                builtin.live_grep({ cwd = utils.git_root() })
-                                            else
-                                                builtin.live_grep()
-                                            end
-                                        end
-                                    },
-                                    { 'Fzf', tele_func = builtin.current_buffer_fuzzy_find },
-                                },
-                            }
-                        }
-                    }
-                end
-            }
+            { 'FabianWirth/search.nvim', opts = require('kiro.config.telescope').search_opts }
         },
         cmd = 'Telescope',
         keys = km.telescope,
-        opts = function()
-            local trouble = require('trouble.providers.telescope')
-            return {
-                defaults = {
-                    mappings = {
-                        i = { ["<c-t>"] = trouble.open_with_trouble },
-                        n = { ["<c-t>"] = trouble.open_with_trouble },
-                    }
-                },
-            }
-        end
+        opts = require('kiro.config.telescope').opts,
     },
     { 'mbbill/undotree',            cmd = { 'UndotreeOpen', 'UndotreeToggle' }, keys = km.undo_tree },
     {
@@ -126,12 +74,32 @@ return {
         opts = {}
     },
     {
+        'sindrets/diffview.nvim',
+        keys = km.diffview.when_closed,
+        opts = { keymaps = { view = km.diffview.when_open, file_panel = km.diffview.when_open } }
+    },
+    {
         'lewis6991/gitsigns.nvim',
         event = 'BufEnter *?',
         opts = {
             on_attach = km.gitsigns,
             current_line_blame = true,
-        },
+            current_line_blame_opts = { virt_text_pos = 'right_align' },
+            preview_config = { border = 'rounded' },
+        }
+    },
+    { -- only fot the fancy hunk diff view
+        'tanvirtin/vgit.nvim',
+        dependencies = 'nvim-lua/plenary.nvim',
+        keys = km.vgit,
+        opts = {
+            keymaps = {},
+            settings = {
+                scene = { diff_preference = 'split', keymaps = { quit = 'q' } },
+                live_blame = { enabled = false },
+                live_gutter = { enabled = false },
+            }
+        }
     },
 
     -- Highlights and Indentation
@@ -210,12 +178,12 @@ return {
                 config = function()
                     require('luasnip.loaders.from_vscode').lazy_load({ paths = './snippets' })
                 end,
+                build = 'make install_jsregexp'
             },
         },
         config = require('kiro.config.auto_complete'),
     },
-    -- TODO: Upgrade to beta
-    {
+    { -- TODO: Upgrade to beta
         'folke/trouble.nvim',
         keys = km.trouble,
         opts = {
@@ -243,8 +211,7 @@ return {
         dependencies = 'arkav/lualine-lsp-progress',
         opts = require('kiro.config.lualine'),
     },
-
-    { 'akinsho/bufferline.nvim', lazy = false, keys = km.bufferline, opts = require('kiro.config.bufferline'), },
+    { 'akinsho/bufferline.nvim', event = 'VimEnter', keys = km.bufferline, opts = require('kiro.config.bufferline') },
     {
         'utilyre/barbecue.nvim',
         event = 'BufEnter *?',
@@ -259,10 +226,11 @@ return {
         },
         opts = {},
     },
+    { 'folke/which-key.nvim',    event = 'VeryLazy', opts = {} },
 
     -- language specific
     { 'mrcjkb/rustaceanvim',     ft = 'rust' },
-    { 'folke/neodev.nvim',       ft = 'lua',   opts = {} },
+    { 'folke/neodev.nvim',       ft = 'lua',         opts = {} },
     {
         "luckasRanarison/tailwind-tools.nvim",
         dependencies = "nvim-treesitter/nvim-treesitter",

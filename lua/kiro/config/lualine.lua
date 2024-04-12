@@ -18,8 +18,9 @@ return function()
                 {
                     'lsp_progress',
                     display_components = {
-                        'lsp_client_name',
                         'spinner',
+                        'lsp_client_name',
+                        { 'title' },
                     },
                     timer = { spinner = 100 },
                     spinner_symbols = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },

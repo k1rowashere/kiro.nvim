@@ -16,7 +16,7 @@ km('n', '[d', vim.diagnostic.goto_prev, opts('Previous Diagnostic'))
 km('n', ']d', vim.diagnostic.goto_next, opts('Next Diagnostic'))
 
 km({ 'n', 'i' }, '<F1>', '<nop>')
-km('n', '<esc>', vim.cmd.noh, opts())
+km('n', '<esc>', vim.cmd.noh)
 km('n', '<C-i>', '<C-I>')
 
 -- Register stuff
@@ -59,7 +59,7 @@ km('n', '<leader>!q', '<cmd>bd!<cr>', opts('Force Close Buffer'))
 km('n', '<leader>wq', '<cmd>w<cr><cmd>bd<CR>', opts('Write then Close Buffer'))
 
 -- TODO: Tab Navigation
--- km('n', '<leader><leader><tab>', '<cmd>tabNext<cr>', opts('Next Tab'))
+km('n', '<leader><leader><tab>', '<cmd>tabNext<cr>', opts('Next Tab'))
 
 
 
@@ -85,6 +85,12 @@ M.cmp = function(cmp)
     }
 end
 
+M.diffview = {
+    when_closed = { { '<leader>hd', '<cmd>DiffviewOpen<cr>', desc = 'Toggle Diffview' } },
+    -- uses `vim.keymap.set` format:
+    when_open = { { 'n', '<leader>hd', '<cmd>DiffviewClose<cr>', opts('Close Diffview') } }
+}
+
 M.gitsigns = function(bufnr)
     local gs = package.loaded.gitsigns
     local o = function(opt)
@@ -95,7 +101,7 @@ M.gitsigns = function(bufnr)
     km('n', ']h',
         function()
             if vim.wo.diff then return ']c' end
-            vim.schedule(function() gs.next_hunk() end)
+            vim.schedule(gs.next_hunk)
             return '<Ignore>'
         end,
         o { expr = true, desc = 'Next Hunk' }
@@ -104,38 +110,33 @@ M.gitsigns = function(bufnr)
     km('n', '[h',
         function()
             if vim.wo.diff then return '[c' end
-            vim.schedule(function() gs.prev_hunk() end)
+            vim.schedule(gs.prev_hunk)
             return '<Ignore>'
         end,
         o { expr = true, desc = 'Previous Hunk' }
     )
 
-    -- Actions
-    local l = '<leader>h'
-    km('n', l .. 's', gs.stage_hunk, { desc = 'Stage hunk' })
-    km('n', l .. 'r', gs.reset_hunk, { desc = 'Reset hunk' })
+    km('n', '<leader>hs', gs.stage_hunk, { desc = 'Stage hunk' })
+    km('n', '<leader>hr', gs.reset_hunk, { desc = 'Reset hunk' })
     km(
         'v',
-        l .. 's',
+        '<leader>hs',
         function() gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,
         o { desc = 'Stage hunk' }
     )
     km(
         'v',
-        l .. 'r',
+        '<leader>hr',
         function() gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,
         o { desc = 'Reset hunk' }
     )
-    km('n', l .. 'S', gs.stage_buffer, o { desc = 'Stage buffer' })
-    km('n', l .. 'u', gs.undo_stage_hunk, o { desc = 'Undo stage hunk' })
-    km('n', l .. 'R', gs.reset_buffer, o { desc = 'Reset buffer' })
-    km('n', l .. 'p', gs.preview_hunk, o { desc = 'Preview hunk' })
-    km('n', l .. 'b', function() gs.blame_line({ full = true }) end, o { desc = 'Blame line' })
-    km('n', l .. 'd', gs.diffthis, o { desc = 'Diff this' })
-    km('n', l .. 'D', function() gs.diffthis('~') end, o { desc = 'Diff this (ignore whitespace)' })
-    km('n', l .. 'td', gs.toggle_deleted, o { desc = 'Toggle deleted' })
-
-    -- Text object
+    km('n', '<leader>hS', gs.stage_buffer, o { desc = 'Stage buffer' })
+    km('n', '<leader>hu', gs.undo_stage_hunk, o { desc = 'Undo stage hunk' })
+    km('n', '<leader>hR', gs.reset_buffer, o { desc = 'Reset buffer' })
+    -- km('n', '<leader>hp', gs.preview_hunk, o { desc = 'Preview hunk' })
+    km('n', '<leader>hb', function() gs.blame_line({ full = true }) end, o { desc = 'Blame line' })
+    -- km('n', '<leader>hd', gs.diffthis, o { desc = 'Diff this' })
+    -- km('n', '<leader>hD', function() gs.diffthis('~') end, o { desc = 'Diff this (ignore whitespace)' })
     km({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<cr>')
 end
 
@@ -218,9 +219,13 @@ M.trouble = {
     { '<leader>tt', '<cmd>TroubleToggle todo<cr>',                  desc = 'Trouble Todo' },
 }
 
+M.vgit = {
+    { '<leader>hp', '<cmd>VGit buffer_hunk_preview<cr>', desc = 'Hunk Diff' }
+}
+
 M.ufo = function()
     return {
-        'z',
+        'za', 'zr', 'zm', 'zc', 'zo',
         { 'zR', require('ufo').openAllFolds },
         { 'zM', require('ufo').closeAllFolds },
         { 'Z',  require('ufo').peekFoldedLinesUnderCursor },

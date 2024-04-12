@@ -1,21 +1,22 @@
 local M = {}
 
 local g = function(name) vim.api.nvim_create_augroup(name, {}) end
-local fmt = g('format_on_save')
+local autocmd = vim.api.nvim_create_autocmd
 
-vim.api.nvim_create_autocmd(
+
+autocmd(
     'TextYankPost',
     {
         group = g('highlight_yank'),
         callback = function() vim.highlight.on_yank() end
     }
 )
-vim.api.nvim_create_autocmd('BufWritePre', { group = g('save_folds'), command = 'mkview' })
-vim.api.nvim_create_autocmd('BufWritePost', { group = g('save_folds'), command = 'silent! loadview' })
-vim.api.nvim_create_autocmd('BufEnter', { group = g('format_options'), command = 'set fo-=o' })
+autocmd('BufWritePre', { group = g('save_folds'), command = 'mkview' })
+autocmd('BufWritePost', { group = g('save_folds'), command = 'silent! loadview' })
+autocmd('BufEnter', { group = g('format_options'), command = 'set fo-=o' })
 
 -- Auto save session
-vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+autocmd({ 'BufWritePre' }, {
     group = vim.api.nvim_create_augroup('Save Session', {}),
     callback = function()
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -27,8 +28,8 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
     end,
 })
 
-
-vim.api.nvim_create_autocmd('LspAttach', {
+local fmt = g('format_on_save')
+autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('UserLspConfig', {}),
     callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -36,7 +37,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         if client.supports_method('textDocument/formatting') then
             vim.api.nvim_clear_autocmds({ group = fmt, buffer = ev.buf })
-            vim.api.nvim_create_autocmd('BufWritePre', {
+            autocmd('BufWritePre', {
                 group = fmt,
                 buffer = ev.buf,
                 callback = function() vim.lsp.buf.format() end,
