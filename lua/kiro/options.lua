@@ -23,6 +23,7 @@ vim.o.splitbelow = true
 
 -- scroll options
 vim.o.scrolloff = 10
+vim.o.sidescrolloff = 10
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1

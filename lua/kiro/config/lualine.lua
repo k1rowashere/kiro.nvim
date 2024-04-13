@@ -3,7 +3,7 @@ return function()
         options = {
             theme = 'auto',
             disabled_filetypes = {
-                statusline = { 'dashboard', 'undotree' },
+                statusline = { 'alpha', 'undotree' },
             },
             refresh = { statusline = 100 },
             section_separators = { left = '', right = '' },

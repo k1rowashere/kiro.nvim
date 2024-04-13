@@ -1,5 +1,13 @@
 local M = {}
-local utils = require('kiro.utils')
+
+local function git_root()
+    local dot_git_path = vim.fn.finddir('.git', '.;')
+    return vim.fn.fnamemodify(dot_git_path, ':h')
+end
+
+local function is_git_repo()
+    return M.git_root() ~= ''
+end
 
 M.search_opts = function()
     local builtin = require('telescope.builtin')
@@ -24,8 +32,8 @@ M.search_opts = function()
                     {
                         'Grep',
                         tele_func = function()
-                            if utils.is_git_repo() then
-                                builtin.live_grep({ cwd = utils.git_root() })
+                            if is_git_repo() then
+                                builtin.live_grep({ cwd = git_root() })
                             else
                                 builtin.live_grep()
                             end
