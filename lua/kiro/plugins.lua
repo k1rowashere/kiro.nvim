@@ -139,7 +139,8 @@ return {
             incremental_selection = {
                 enable = true,
                 keymaps = km.treesitter
-            }
+            },
+            highlight = { enable = true },
         },
     },
     { 'brenoprata10/nvim-highlight-colors', event = 'BufEnter *?', opts = {} },
