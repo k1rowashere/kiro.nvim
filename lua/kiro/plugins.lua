@@ -144,7 +144,7 @@ return {
         },
     },
     { 'brenoprata10/nvim-highlight-colors', event = 'BufEnter *?', opts = {} },
-    { 'lewis6991/satellite.nvim',           event = 'BufEnter *?', opts = {} },
+    { 'dstein64/nvim-scrollview',           event = 'BufEnter *?', main = 'scrollview.contrib.gitsigns',  opts = {} },
     { 'kevinhwang91/nvim-hlslens',          keys = { '/', '?' },   opts = {} },
 
     -- Lsp stuff
