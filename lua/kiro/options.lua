@@ -1,10 +1,13 @@
 -- Vim options
-vim.o.nu = true
+vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.undofile = true
 vim.o.swapfile = false
 vim.o.updatetime = 300
+
+vim.o.ignorecase = true
+vim.o.smartcase = true
 
 -- tab options
 vim.o.tabstop = 4

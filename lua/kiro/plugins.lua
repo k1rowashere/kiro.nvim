@@ -31,16 +31,19 @@ return {
         'refractalize/oil-git-status.nvim',
         dependencies = {
             'stevearc/oil.nvim',
+            pin = true, -- FIXME: temp fix for a bug in latest commit
             opts = {
                 delete_to_trash = true,
                 skip_confirm_for_simple_edits = true,
                 win_options = { signcolumn = 'auto:2' },
-                keymaps = { ['q'] = 'actions.close' }
+                float = { padding = 5 },
+                columns = { 'icon', 'size' },
+                keymaps = km.oil.active,
             }
         },
-        lazy = not vim.list_contains(vim.v.argv, '.'),
+        lazy = not vim.iter(vim.fn.argv()):any(vim.fn.isdirectory),
         cmd = 'Oil',
-        keys = km.oil,
+        keys = km.oil.global,
         opts = {}
     },
     {
@@ -133,7 +136,7 @@ return {
     },
     {
         'nvim-treesitter/nvim-treesitter',
-        event = 'BufEnter',
+        event = { 'BufEnter', 'BufRead' },
         main = 'nvim-treesitter.configs',
         opts = {
             incremental_selection = {
@@ -144,13 +147,23 @@ return {
         },
     },
     { 'brenoprata10/nvim-highlight-colors', event = 'BufEnter *?', opts = {} },
-    { 'dstein64/nvim-scrollview',           event = 'BufEnter *?', main = 'scrollview.contrib.gitsigns',  opts = {} },
+    { 'dstein64/nvim-scrollview',           event = 'BufEnter *?', main = 'scrollview.contrib.gitsigns', opts = {} },
     { 'kevinhwang91/nvim-hlslens',          keys = { '/', '?' },   opts = {} },
 
     -- Lsp stuff
-    { 'neovim/nvim-lspconfig',              event = 'BufEnter *?' },
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {
+            "SmiteshP/nvim-navbuddy",
+            dependencies = { "SmiteshP/nvim-navic", "MunifTanjim/nui.nvim" },
+            lazy = false,
+            keys = km.navbuddy,
+            opts = { lsp = { auto_attach = true }, window = { border = 'rounded' } }
+        },
+        event = 'BufEnter *?'
+    },
     { 'williamboman/mason-lspconfig.nvim' },
-    { 'williamboman/mason.nvim',            cmd = 'Mason',         opts = { ui = { border = 'rounded' } } },
+    { 'williamboman/mason.nvim',          cmd = 'Mason', opts = { ui = { border = 'rounded' } } },
     {
         'hrsh7th/nvim-cmp',
         event = { 'InsertEnter', 'CmdlineEnter' },
@@ -179,6 +192,27 @@ return {
         },
     },
 
+    -- Compiling, Running and debugging
+    { -- This plugin
+        "Zeioth/compiler.nvim",
+        cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+        dependencies = { "stevearc/overseer.nvim" },
+        opts = {},
+    },
+    { -- The task runner we use
+        "stevearc/overseer.nvim",
+        commit = "68a2d344cea4a2e11acfb5690dc8ecd1a1ec0ce0",
+        cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+        opts = {
+            task_list = {
+                direction = "bottom",
+                min_height = 25,
+                max_height = 25,
+                default_detail = 1
+            },
+        },
+    },
+
     -- Editing
     {
         'kylechui/nvim-surround',
@@ -189,6 +223,7 @@ return {
     { 'windwp/nvim-autopairs',    event = 'InsertEnter',              opts = {} },
 
     -- Fancy UI
+    { 'akinsho/toggleterm.nvim',  keys = km.toggleterm,               opts = { open_mapping = km.toggleterm } },
     { 'goolord/alpha-nvim',       opts = require('kiro.config.alpha') },
     { 'stevearc/dressing.nvim',   event = 'VeryLazy',                 opts = {} },
     { 'folke/todo-comments.nvim', event = 'BufEnter *?',              dependencies = 'nvim-lua/plenary.nvim', opts = {} },
@@ -198,8 +233,13 @@ return {
         dependencies = 'arkav/lualine-lsp-progress',
         opts = require('kiro.config.lualine'),
     },
-    { 'akinsho/bufferline.nvim', event = 'VimEnter',    keys = km.bufferline,                 opts = require('kiro.config.bufferline') },
-    { 'utilyre/barbecue.nvim',   event = 'BufEnter *?', dependencies = 'SmiteshP/nvim-navic', opts = { theme = 'catppuccin-mocha' } },
+    { 'akinsho/bufferline.nvim',         event = 'VimEnter',       keys = km.bufferline, opts = require('kiro.config.bufferline') },
+    {
+        'utilyre/barbecue.nvim',
+        event = 'BufEnter *?',
+        dependencies = 'SmiteshP/nvim-navic',
+        opts = {}
+    },
     {
         'numToStr/Comment.nvim',
         keys = {
@@ -208,15 +248,22 @@ return {
         },
         opts = {},
     },
-    { 'folke/which-key.nvim', event = 'VeryLazy', opts = {} },
+    { 'folke/which-key.nvim',            event = 'VeryLazy',       opts = {} },
+    { 'Eandrju/cellular-automaton.nvim', cmd = 'CellularAutomaton' },
 
     -- language specific
-    { 'mrcjkb/rustaceanvim',  ft = 'rust' },
-    { 'folke/neodev.nvim',    ft = 'lua',         opts = {} },
+    { 'mrcjkb/rustaceanvim',             ft = 'rust' },
+    { 'folke/neodev.nvim',               ft = 'lua',               opts = {} },
     {
-        "luckasRanarison/tailwind-tools.nvim",
-        dependencies = "nvim-treesitter/nvim-treesitter",
-        event = 'VeryLazy',
-        opts = {}
+        'luckasRanarison/tailwind-tools.nvim',
+        dependencies = 'nvim-treesitter/nvim-treesitter',
+        ft = { 'html', 'css', 'scss', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'rust' },
+        opts = { document_color = { enabled = false } },
+    },
+    {
+        'razak17/tailwind-fold.nvim',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        ft = { 'html', 'rust', 'svelte', 'astro', 'vue', 'typescriptreact', 'php', 'blade' },
+        opts = { min_chars = 30 },
     },
 }

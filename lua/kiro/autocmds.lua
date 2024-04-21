@@ -3,6 +3,21 @@ local M = {}
 local g = function(name) vim.api.nvim_create_augroup(name, {}) end
 local autocmd = vim.api.nvim_create_autocmd
 
+local relnum = g('relativenumber_toggle')
+autocmd('InsertEnter', {
+    group = relnum,
+    callback = function(ev)
+        if vim.o.relativenumber then
+            vim.o.relativenumber = false
+            autocmd('InsertLeave', {
+                buffer = ev.buf,
+                group = relnum,
+                callback = function() vim.o.relativenumber = true end,
+                once = true
+            })
+        end
+    end
+})
 
 autocmd(
     'TextYankPost',

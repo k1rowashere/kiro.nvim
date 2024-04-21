@@ -38,10 +38,9 @@ return function()
         },
         -- tabline = {},
         extensions = {
-            'fugitive',
             'quickfix',
             'nvim-dap-ui',
-            -- 'toggleterm',
+            'toggleterm',
             -- 'aerial',
             'oil',
             'lazy',

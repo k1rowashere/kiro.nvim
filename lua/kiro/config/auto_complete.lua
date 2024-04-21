@@ -34,7 +34,7 @@ return function()
             end,
         },
         snippet = { expand = function(args) luasnip.lsp_expand(args.body) end, },
-        mapping = require('kiro.keymaps').cmp(cmp),
+        mapping = require('kiro.keymaps').cmp(cmp, luasnip),
         sources = {
             { name = 'copilot' },
             { name = 'nvim_lsp' },

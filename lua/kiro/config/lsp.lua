@@ -3,6 +3,8 @@ require('mason-lspconfig').setup()
 
 local lspconfig = require('lspconfig')
 
+lspconfig.vhdl_ls.setup({})
+
 require('mason-lspconfig').setup_handlers({
     -- default handler
     function(server_name)
@@ -10,6 +12,24 @@ require('mason-lspconfig').setup_handlers({
     end,
 
     ['rust_analyzer'] = function() end,
+
+    ['pylsp'] = function()
+        local function which_python()
+            local f = io.popen('env which python', 'r') or error("Fail to execute 'env which python'")
+            local s = f:read('*a') or error("Fail to read from io.popen result")
+            f:close()
+            return string.gsub(s, '%s+$', '')
+        end
+
+        lspconfig.pylsp.setup {
+            settings = {
+                pylsp = {
+                    plugins = {
+                        jedi = { environment = which_python() },
+                    }
+                }
+            } }
+    end,
 
     ['lua_ls'] = function()
         lspconfig.lua_ls.setup({

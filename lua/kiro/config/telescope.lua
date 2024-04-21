@@ -5,10 +5,6 @@ local function git_root()
     return vim.fn.fnamemodify(dot_git_path, ':h')
 end
 
-local function is_git_repo()
-    return M.git_root() ~= ''
-end
-
 M.search_opts = function()
     local builtin = require('telescope.builtin')
     return {
@@ -32,7 +28,7 @@ M.search_opts = function()
                     {
                         'Grep',
                         tele_func = function()
-                            if is_git_repo() then
+                            if git_root() ~= '' then
                                 builtin.live_grep({ cwd = git_root() })
                             else
                                 builtin.live_grep()

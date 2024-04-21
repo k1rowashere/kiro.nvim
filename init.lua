@@ -6,19 +6,16 @@ UV = vim.uv or vim.loop
 -- init Lazy
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not UV.fs_stat(lazypath) then
-    vim.fn.system({
-        'git',
-        'clone',
-        '--filter=blob:none',
-        'https://github.com/folke/lazy.nvim.git',
-        '--branch=stable',
-        lazypath,
-    })
+    local repo = 'https://github.com/folke/lazy.nvim.git'
+    vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', repo, lazypath, })
 end
 ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup('kiro.plugins')
+require('lazy').setup('kiro.plugins', {
+    change_detection = { notify = false },
+    install = { colorscheme = { 'catppuccin-mocha' } },
+})
 
 require('kiro.options')
 require('kiro.autocmds')
