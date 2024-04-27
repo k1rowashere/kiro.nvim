@@ -15,15 +15,15 @@ M.search_opts = function()
                     {
                         'Commits',
                         builtin.git_commits,
-                        available = function() return vim.fn.isdirectory('.git') end
+                        available = function() return vim.fn.isdirectory('.git') end,
                     },
-                    { name = "Branches", tele_func = builtin.git_branches },
-                }
+                    { name = 'Branches', tele_func = builtin.git_branches },
+                },
             },
             files = {
                 tabs = {
-                    { 'Buffers',      tele_func = builtin.buffers },
-                    { 'Files',        tele_func = builtin.find_files },
+                    { 'Buffers', tele_func = builtin.buffers },
+                    { 'Files', tele_func = builtin.find_files },
                     { 'Recent Files', tele_func = builtin.oldfiles },
                     {
                         'Grep',
@@ -33,12 +33,12 @@ M.search_opts = function()
                             else
                                 builtin.live_grep()
                             end
-                        end
+                        end,
                     },
                     { 'Fzf', tele_func = builtin.current_buffer_fuzzy_find },
                 },
-            }
-        }
+            },
+        },
     }
 end
 
@@ -47,9 +47,9 @@ M.opts = function()
     return {
         defaults = {
             mappings = {
-                i = { ["<c-t>"] = trouble.open_with_trouble },
-                n = { ["<c-t>"] = trouble.open_with_trouble },
-            }
+                i = { ['<c-t>'] = trouble.open_with_trouble },
+                n = { ['<c-t>'] = trouble.open_with_trouble },
+            },
         },
     }
 end

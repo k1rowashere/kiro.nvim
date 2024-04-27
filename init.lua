@@ -7,7 +7,7 @@ UV = vim.uv or vim.loop
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not UV.fs_stat(lazypath) then
     local repo = 'https://github.com/folke/lazy.nvim.git'
-    vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', repo, lazypath, })
+    vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', repo, lazypath })
 end
 ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)

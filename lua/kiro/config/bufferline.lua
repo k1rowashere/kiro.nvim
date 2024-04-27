@@ -9,7 +9,7 @@ return function()
         options = {
             separator_style = { '', '' },
             indicator = { style = 'underline' },
-            diagnostics_indicator = function(count, _, _, _) return "(" .. count .. ")" end,
+            diagnostics_indicator = function(count, _, _, _) return '(' .. count .. ')' end,
             hover = { enabled = true, delay = 200, reveal = { 'close' } },
             offsets = {
                 {
@@ -28,6 +28,6 @@ return function()
             numbers = 'ordinal',
             diagnostics = 'nvim_lsp',
         },
-        highlights = function() return hl end
+        highlights = function() return hl end,
     }
 end

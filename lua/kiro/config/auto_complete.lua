@@ -21,7 +21,7 @@ return function()
                     mode = 'symbol_text',
                     maxwidth = 50,
                     symbol_map = { Copilot = '' },
-                    before = require("tailwind-tools.cmp").lspkind_format
+                    before = require('tailwind-tools.cmp').lspkind_format,
                 })(entry, vim_item)
 
                 if entry.source.name == 'calc' then vim_item.kind = '󰃬 calc' end
@@ -33,7 +33,7 @@ return function()
                 return kind
             end,
         },
-        snippet = { expand = function(args) luasnip.lsp_expand(args.body) end, },
+        snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
         mapping = require('kiro.keymaps').cmp(cmp, luasnip),
         sources = {
             { name = 'copilot' },
@@ -51,23 +51,20 @@ return function()
     cmp.event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
 
     cmp.setup.filetype('gitcommit', {
-        sources = cmp.config.sources(
-            { { name = 'git' } },
-            { { name = 'buffer' } }
-        ),
+        sources = cmp.config.sources({ { name = 'git' } }, { { name = 'buffer' } }),
     })
 
     cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
-        window = { completion = cmp.config.window.bordered(), },
+        window = { completion = cmp.config.window.bordered() },
         formatting = { fields = { 'abbr' } },
     })
 
     cmp.setup.cmdline({ '/', '?' }, {
         mapping = cmp.mapping.preset.cmdline(),
         sources = { { name = 'buffer' } },
-        window = { completion = cmp.config.window.bordered(), },
+        window = { completion = cmp.config.window.bordered() },
         formatting = { fields = { 'abbr' } },
     })
 end

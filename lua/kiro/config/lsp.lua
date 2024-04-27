@@ -7,28 +7,27 @@ lspconfig.vhdl_ls.setup({})
 
 require('mason-lspconfig').setup_handlers({
     -- default handler
-    function(server_name)
-        lspconfig[server_name].setup({})
-    end,
+    function(server_name) lspconfig[server_name].setup({}) end,
 
     ['rust_analyzer'] = function() end,
 
     ['pylsp'] = function()
         local function which_python()
             local f = io.popen('env which python', 'r') or error("Fail to execute 'env which python'")
-            local s = f:read('*a') or error("Fail to read from io.popen result")
+            local s = f:read('*a') or error('Fail to read from io.popen result')
             f:close()
             return string.gsub(s, '%s+$', '')
         end
 
-        lspconfig.pylsp.setup {
+        lspconfig.pylsp.setup({
             settings = {
                 pylsp = {
                     plugins = {
                         jedi = { environment = which_python() },
-                    }
-                }
-            } }
+                    },
+                },
+            },
+        })
     end,
 
     ['lua_ls'] = function()
@@ -56,7 +55,7 @@ require('mason-lspconfig').setup_handlers({
             end,
         })
         vim.list_extend(lspconfig.tailwindcss.filetypes, { 'rust' })
-    end
+    end,
 })
 
 vim.diagnostic.config({
@@ -68,17 +67,11 @@ vim.diagnostic.config({
             [vim.diagnostic.severity.ERROR] = '',
             [vim.diagnostic.severity.WARN] = '',
             [vim.diagnostic.severity.HINT] = '',
-            [vim.diagnostic.severity.INFO] = ''
-        }
-    }
+            [vim.diagnostic.severity.INFO] = '',
+        },
+    },
 })
 
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
-    vim.lsp.handlers.hover,
-    { border = 'rounded' }
-)
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-    vim.lsp.handlers.signature_help,
-    { border = 'rounded' }
-)
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
