@@ -12,12 +12,16 @@ end
 ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- AUTOCMDTESTING = 'BufEnter *?'
+AUTOCMDTEST = 'User LazyBufEnter'
+
 require('lazy').setup('kiro.plugins', {
     change_detection = { notify = false },
     install = { colorscheme = { 'catppuccin-mocha' } },
+    ui = { border = 'rounded' },
 })
 
-require('kiro.options')
 require('kiro.autocmds')
+require('kiro.options')
 require('kiro.keymaps')
 require('kiro.config.lsp')

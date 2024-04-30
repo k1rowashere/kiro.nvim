@@ -4,6 +4,18 @@ local g = function(name) vim.api.nvim_create_augroup(name, {}) end
 local autocmd = vim.api.nvim_create_autocmd
 
 local relnum = g('relativenumber_toggle')
+
+-- Fix: starts the lsp after session is loaded
+autocmd('SessionLoadPost', { callback = vim.schedule_wrap(function() vim.cmd('LspStart') end) })
+
+-- Deffers the BufEnter Lazy command to the next idle time
+autocmd('BufEnter', {
+    pattern = '*?',
+    nested = true,
+    callback = vim.schedule_wrap(function() vim.api.nvim_exec_autocmds('User', { pattern = 'LazyBufEnter' }) end),
+})
+
+-- Set relativenumber only in normal mode
 autocmd('InsertEnter', {
     group = relnum,
     callback = function(ev)

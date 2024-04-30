@@ -2,13 +2,13 @@ local M = {}
 
 local map = vim.keymap.set
 
---- @param opts table | string | nil
+--- @param opts table | string?
 --- @return table
 local opts = function(opts)
-    local desc = type(opts) == 'string' and opts or opts and opts.desc
-    local o = { noremap = true, silent = true, expr = false, desc = desc }
-
-    return o
+    local default = { noremap = true, silent = true, expr = false }
+    if type(opts) == 'string' then opts = { desc = opts } end
+    opts = opts or {}
+    return vim.tbl_extend('keep', opts, default)
 end
 
 map('n', '<esc>', vim.cmd.noh)
@@ -17,7 +17,7 @@ map({ 'n', 'i' }, '<F1>', '<nop>')
 map('n', '<C-i>', '<C-I>')
 
 map('t', '<esc><esc>', '<C-\\><C-n>', opts('Exit Terminal Mode'))
-map({ 'i', 't' }, '<C-BS>', '<C-w>', opts('Delete Previous Word'))
+map({ 'i', 't', 'c' }, '<C-BS>', '<C-w>', opts({ desc = 'Delete Previous Word', silent = false }))
 
 map('n', '[d', vim.diagnostic.goto_prev, opts('Previous Diagnostic'))
 map('n', ']d', vim.diagnostic.goto_next, opts('Next Diagnostic'))
@@ -103,6 +103,11 @@ M.cmp = function(cmp, luasnip)
     }
 end
 
+M.comment = {
+    { 'gc', mode = { 'x', 'n' }, desc = 'Toggle Line Comment' },
+    { 'gb', mode = { 'x', 'n' }, desc = 'Toggle Block Comment' },
+}
+
 M.diffview = {
     when_closed = { { '<leader>hd', '<cmd>DiffviewOpen<cr>', desc = 'Toggle Diffview' } },
     -- uses `vim.keymap.set` format:
@@ -169,15 +174,11 @@ M.lsp = function(bufnr, client)
     map('n', '<F2>', vim.lsp.buf.rename, o('Rename Symbol'))
     map({ 'n', 'v' }, '<M-Enter>', vim.lsp.buf.code_action, o('Code Action'))
     map('n', 'gr', '<cmd>Telescope lsp_references<cr>', o('Show References'))
-    map('n', '<f3>', function() vim.lsp.buf.format({ async = true }) end, o('Format Document'))
+    map('n', '<f3>', function() require('conform').format({ bufnr = bufnr }) end, o('Format Document'))
 
     if client.supports_method('textDocument/inlayHint') then
-        local fn = function()
-            local is_enabled = vim.lsp.inlay_hint.is_enabled(bufnr)
-            vim.lsp.inlay_hint.enable(bufnr, not is_enabled)
-        end
-
-        map('n', 'gh', fn, o('Toggle Inlay Hints'))
+        local inlayToggle = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(bufnr)) end
+        map('n', 'gh', inlayToggle, o('Toggle Inlay Hints'))
     end
 end
 
@@ -269,10 +270,10 @@ M.vgit = {
 M.ufo = function()
     return {
         'za',
-        'zr',
-        'zm',
         'zc',
         'zo',
+        { 'zr', require('ufo').openFoldsExceptKinds },
+        { 'zm', require('ufo').closeFoldsWith },
         { 'zR', require('ufo').openAllFolds },
         { 'zM', require('ufo').closeAllFolds },
         { 'Z', require('ufo').peekFoldedLinesUnderCursor },

@@ -1,8 +1,11 @@
 local M = {}
-
-local function git_root()
-    local dot_git_path = vim.fn.finddir('.git', '.;')
-    return vim.fn.fnamemodify(dot_git_path, ':h')
+local git_root = require('kiro.utils').git_root
+local grep = function()
+    if git_root() ~= '' then
+        require('telescope.builtin').live_grep({ cwd = git_root() })
+    else
+        require('telescope.builtin').live_grep()
+    end
 end
 
 M.search_opts = function()
@@ -12,30 +15,17 @@ M.search_opts = function()
         collections = {
             git = {
                 tabs = {
-                    {
-                        'Commits',
-                        builtin.git_commits,
-                        available = function() return vim.fn.isdirectory('.git') end,
-                    },
-                    { name = 'Branches', tele_func = builtin.git_branches },
+                    { 'Commits', builtin.git_commits, available = function() return vim.fn.isdirectory('.git') end },
+                    { 'Branches', builtin.git_branches },
                 },
             },
             files = {
                 tabs = {
-                    { 'Buffers', tele_func = builtin.buffers },
-                    { 'Files', tele_func = builtin.find_files },
-                    { 'Recent Files', tele_func = builtin.oldfiles },
-                    {
-                        'Grep',
-                        tele_func = function()
-                            if git_root() ~= '' then
-                                builtin.live_grep({ cwd = git_root() })
-                            else
-                                builtin.live_grep()
-                            end
-                        end,
-                    },
-                    { 'Fzf', tele_func = builtin.current_buffer_fuzzy_find },
+                    { 'Buffers', builtin.buffers },
+                    { 'Files', builtin.find_files },
+                    { 'Recent Files', builtin.oldfiles },
+                    { 'Grep', grep },
+                    { 'Fzf', builtin.current_buffer_fuzzy_find },
                 },
             },
         },

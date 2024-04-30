@@ -1,4 +1,3 @@
----@diagnostic disable: missing-fields
 return function()
     local cmp = require('cmp')
     local lspkind = require('lspkind')
