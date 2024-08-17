@@ -1,12 +1,12 @@
 # kiro.nvim
 
-My personal neovim (0.9.0+) config. 
+My personal neovim (0.9.0+) config.
 Not intended for public use, use at your own risk.
 
 ## Installation
+
 Clone the repo in `~/.config/nvim` and start nvim.
 
-    
 ## Screenies
 
 ![image](https://github.com/k1rowashere/kiro.nvim/assets/29287159/60622d5b-2668-4fa4-bc9b-db1b5ab79718?raw=true)
