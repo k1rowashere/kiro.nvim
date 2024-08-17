@@ -2,8 +2,8 @@ local M = {}
 
 local map = vim.keymap.set
 
---- @param opts table | string?
---- @return table
+--- @param opts vim.keymap.set.Opts | string?
+--- @return vim.keymap.set.Opts
 local opts = function(opts)
     local default = { noremap = true, silent = true, expr = false }
     if type(opts) == 'string' then opts = { desc = opts } end
@@ -18,6 +18,7 @@ map('n', '<C-i>', '<C-I>')
 
 map('t', '<esc><esc>', '<C-\\><C-n>', opts('Exit Terminal Mode'))
 map({ 'i', 't', 'c' }, '<C-BS>', '<C-w>', opts({ desc = 'Delete Previous Word', silent = false }))
+map({ 'i' }, '<C-del>', '<C-o>dw', opts({ desc = 'Delete Next Word', silent = false }))
 
 map('n', '[d', vim.diagnostic.goto_prev, opts('Previous Diagnostic'))
 map('n', ']d', vim.diagnostic.goto_next, opts('Next Diagnostic'))
@@ -60,7 +61,7 @@ end, opts())
 
 -- TODO: replace with bd plugin
 map('n', '<leader>q', '<cmd>bd<cr>', opts('Close Buffer'))
-map('n', '<leader>!q', '<cmd>bd!<cr>', opts('Force Close Buffer'))
+map('n', '<leader>Q', '<cmd>bd!<cr>', opts('Force Close Buffer'))
 map('n', '<leader>wq', '<cmd>w<cr><cmd>bd<CR>', opts('Write then Close Buffer'))
 
 -- TODO: Tab Navigation
@@ -75,25 +76,29 @@ for i = 1, 9 do
     }
 end
 
-M.cmp = function(cmp, luasnip)
+M.cmp = function()
+    local cmp = require('cmp')
+    local mp = cmp.mapping
+    local luasnip = require('luasnip')
+
     return {
-        ['<CR>'] = cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }),
-        ['<C-u>'] = cmp.mapping.scroll_docs(-1),
-        ['<C-d>'] = cmp.mapping.scroll_docs(1),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-n>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<C-f>'] = cmp.mapping.confirm({ select = true }),
-        ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-        ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
+        ['<CR>'] = mp.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }),
+        ['<C-u>'] = mp.scroll_docs(-1),
+        ['<C-d>'] = mp.scroll_docs(1),
+        ['<C-Space>'] = mp.complete(),
+        ['<C-n>'] = mp.complete(),
+        ['<C-e>'] = mp.close(),
+        ['<C-f>'] = mp.confirm({ select = true }),
+        ['<C-j>'] = mp(mp.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { 'i', 'c' }),
+        ['<C-k>'] = mp(mp.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { 'i', 'c' }),
+        ['<Tab>'] = mp(function(fallback)
             if luasnip.expand_or_jumpable() then
                 luasnip.expand_or_jump()
             else
                 fallback()
             end
         end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
+        ['<S-Tab>'] = mp(function(fallback)
             if luasnip.jumpable(-1) then
                 luasnip.jump(-1)
             else
@@ -106,6 +111,12 @@ end
 M.comment = {
     { 'gc', mode = { 'x', 'n' }, desc = 'Toggle Line Comment' },
     { 'gb', mode = { 'x', 'n' }, desc = 'Toggle Block Comment' },
+}
+
+M.compiler = {
+    { '<F5>', 'CompilerRedo' },
+    { '<S-F5>', 'CompilerRedo' },
+    { '<F6>', 'CompilerToggleResults' },
 }
 
 M.diffview = {
@@ -159,11 +170,11 @@ end
 
 M.toggleterm = '<C-;>'
 
+---@param client vim.lsp.Client
 M.lsp = function(bufnr, client)
-    local o = function(desc) opts({ desc, bufnr }) end
+    local o = function(desc) return opts({ desc = desc, buffer = bufnr }) end
 
     map('n', 'K', vim.lsp.buf.hover, o('Show Hover'))
-    map('n', 'gD', vim.lsp.buf.declaration, o('Go to Declaration'))
     map('n', 'gd', '<cmd>Telescope lsp_definitions<cr>', o('Go to Definition'))
     map('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<cr>', o('Go to Type Definition'))
     map('n', 'gi', '<cmd>Telescope lsp_implementations<cr>', o('Go to Implementation'))
@@ -180,6 +191,7 @@ M.lsp = function(bufnr, client)
         local inlayToggle = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(bufnr)) end
         map('n', 'gh', inlayToggle, o('Toggle Inlay Hints'))
     end
+    if client.name == 'rust-analyzer' then map({ 'n', 'v' }, 'J', ':RustLsp joinLines<cr>', o('Join')) end
 end
 
 M.move = {

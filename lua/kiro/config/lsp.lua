@@ -1,7 +1,6 @@
 return function()
     local lspconfig = require('lspconfig')
     local servers = {
-        vhdl_ls = {},
         lua_ls = {
             settings = {
                 Lua = {
@@ -55,6 +54,23 @@ return function()
             },
         },
     })
+
+    -- return {
+    --     switch_source_header = function()
+    --         vim.lsp.buf_request(0, "textDocument/switchSourceHeader", { uri = vim.uri_from_bufnr(0), },)
+    --     end,
+    -- }
+    vim.lsp.handlers['textDocument/switchSourceHeader'] = function(_, uri)
+        if not uri or uri == '' then
+            vim.api.nvim_echo({ { 'Corresponding file cannot be determined' } }, false, {})
+            return
+        end
+        local file_name = vim.uri_to_fname(uri)
+        vim.api.nvim_cmd({
+            cmd = 'edit',
+            args = { file_name },
+        }, {})
+    end
 
     vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
     vim.lsp.handlers['textDocument/signatureHelp'] =

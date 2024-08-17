@@ -5,14 +5,33 @@ local autocmd = vim.api.nvim_create_autocmd
 
 local relnum = g('relativenumber_toggle')
 
+-- set linewrap on big files (more than 100KB)
+autocmd('BufReadPre', {
+    callback = function(ev)
+        if require('kiro.utils').is_big_file(nil, ev.buf) then
+            vim.opt_local.wrap = true
+            vim.opt_local.linebreak = true
+            vim.opt_local.breakindent = true
+            vim.opt_local.showbreak = '↪'
+            vim.opt_local.display = 'lastline'
+            vim.opt_local.foldmethod = 'manual'
+            vim.cmd.syntax('off')
+        end
+    end,
+})
+
 -- Fix: starts the lsp after session is loaded
-autocmd('SessionLoadPost', { callback = vim.schedule_wrap(function() vim.cmd('LspStart') end) })
+autocmd({ 'SessionLoadPost', 'User' }, {
+    pattern = 'LazyBufEnter',
+    callback = vim.schedule_wrap(function() vim.cmd('LspStart') end),
+})
 
 -- Deffers the BufEnter Lazy command to the next idle time
 autocmd('BufEnter', {
     pattern = '*?',
     nested = true,
     callback = vim.schedule_wrap(function() vim.api.nvim_exec_autocmds('User', { pattern = 'LazyBufEnter' }) end),
+    once = true,
 })
 
 -- Set relativenumber only in normal mode

@@ -43,8 +43,16 @@ return function()
             'toggleterm',
             -- 'aerial',
             'oil',
+            'overseer',
             'lazy',
             'trouble',
+            {
+                sections = {
+                    lualine_a = { function() return 'Neogit' end },
+                    lualine_b = { 'branch', 'diff' },
+                },
+                filetypes = { 'NeogitStatus', 'NeogitPopup' },
+            },
         },
     }
 end

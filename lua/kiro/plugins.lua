@@ -1,14 +1,13 @@
 local km = require('kiro.keymaps')
+local utils = require('kiro.utils')
+local LazyBufEnter = 'User LazyBufEnter'
 
 return {
     {
         'catppuccin/nvim',
         name = 'catppuccin',
         priority = 1000,
-        opts = {
-            transparent_background = true,
-            integrations = { mason = true },
-        },
+        opts = { transparent_background = true, integrations = { mason = true, diffview = true } },
         init = function() vim.cmd.colorscheme('catppuccin-mocha') end,
     },
     { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
@@ -25,9 +24,6 @@ return {
     },
 
     -- Navigation
-    -- TODO: configure leap
-    -- { 'ggandor/leap.nvim',          keys = { 's', '<Plug>(leap-forward)', mode = { 'n', 'o', 'x' } } },
-
     { -- loading the plugins in this order is optimal for performance
         'refractalize/oil-git-status.nvim',
         dependencies = {
@@ -65,14 +61,7 @@ return {
     },
 
     -- Git
-    {
-        'NeogitOrg/neogit',
-        branch = 'nightly',
-        dependencies = { 'sindrets/diffview.nvim', 'nvim-telescope/telescope.nvim' },
-        cmd = 'Neogit',
-        keys = km.neogit,
-        opts = {},
-    },
+    { 'NeogitOrg/neogit', cmd = 'Neogit', keys = km.neogit, opts = {} },
     {
         'sindrets/diffview.nvim',
         keys = km.diffview.when_closed,
@@ -80,7 +69,7 @@ return {
     },
     {
         'lewis6991/gitsigns.nvim',
-        event = AUTOCMDTEST,
+        event = LazyBufEnter,
         opts = {
             on_attach = km.gitsigns,
             current_line_blame = true,
@@ -104,12 +93,10 @@ return {
     -- Highlights and Indentation
     {
         'shellRaining/hlchunk.nvim',
-        event = AUTOCMDTEST,
+        event = LazyBufEnter,
         opts = {
-            indent = { chars = { '' } },
-            blank = { enable = false },
-            line_num = { enable = false },
-            chunk = { style = { { fg = '#b4beff' }, { fg = '#f38ba9' } } },
+            indent = { enable = true },
+            chunk = { enable = true, style = { { fg = '#b4beff' }, { fg = '#f38ba9' } } },
         },
     },
     {
@@ -119,26 +106,26 @@ return {
             'HiPhish/rainbow-delimiters.nvim',
             main = 'rainbow-delimiters.setup',
             opts = {
+                disable = utils.is_big_file,
                 highlight = vim.iter({ 'Red', 'Orange', 'Yellow', 'Green', 'Cyan', 'Blue', 'Violet' })
                     :map(function(c) return 'RainbowDelimiter' .. c end)
                     :totable(),
             },
         },
         opts = {
-            incremental_selection = { enable = true, keymaps = km.treesitter },
-            highlight = { enable = true },
+            incremental_selection = { enable = true, keymaps = km.treesitter, disable = utils.is_big_file },
+            highlight = { enable = true, disable = utils.is_big_file },
         },
     },
-    { 'brenoprata10/nvim-highlight-colors', event = AUTOCMDTEST, opts = {} },
-    { 'dstein64/nvim-scrollview', event = AUTOCMDTEST, main = 'scrollview.contrib.gitsigns', opts = {} },
+    { 'brenoprata10/nvim-highlight-colors', event = LazyBufEnter, opts = {} },
+    { 'dstein64/nvim-scrollview', event = LazyBufEnter, main = 'scrollview.contrib.gitsigns', opts = {} },
     { 'kevinhwang91/nvim-hlslens', keys = { '/', '?' }, opts = {} },
 
     -- Lsp stuff
     {
         'neovim/nvim-lspconfig',
         dependencies = {
-            -- { 'williamboman/mason-lspconfig.nvim' },
-            { dir = '~/Projects/mason-lspconfig.nvim' },
+            { 'williamboman/mason-lspconfig.nvim' },
             { 'williamboman/mason.nvim', opts = { ui = { border = 'rounded' } } },
         },
         config = require('kiro.config.lsp'),
@@ -154,15 +141,12 @@ return {
         'stevearc/conform.nvim',
         event = 'BufWritePre',
         opts = {
-            formatters_by_ft = { lua = { 'stylua' } },
+            formatters_by_ft = utils.formatters,
+            format_on_save = { lsp_fallback = true },
             notify_on_error = false,
-            format_on_save = {
-                timeout_ms = 500,
-                lsp_fallback = true,
-            },
         },
     },
-    { 'utilyre/barbecue.nvim', event = AUTOCMDTEST, dependencies = 'SmiteshP/nvim-navic', opts = {} },
+    -- { 'utilyre/barbecue.nvim', event = LazyBufEnter, dependencies = 'SmiteshP/nvim-navic', opts = {} },
     {
         'hrsh7th/nvim-cmp',
         event = { 'InsertEnter', 'CmdlineEnter' },
@@ -199,8 +183,8 @@ return {
         'Zeioth/compiler.nvim',
         dependencies = {
             'stevearc/overseer.nvim',
-            commit = '68a2d344cea4a2e11acfb5690dc8ecd1a1ec0ce0',
             cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
+            keys = km.compiler,
             opts = {
                 task_list = {
                     direction = 'bottom',
@@ -215,11 +199,7 @@ return {
     },
 
     -- Editing
-    {
-        'kylechui/nvim-surround',
-        keys = { 'ys', 'cs', 'ds', { 'S', mode = 'v' }, { '<c-g>', mode = 'i' } },
-        opts = {},
-    },
+    { 'kylechui/nvim-surround', keys = { 'ys', 'cs', 'ds', { 'S', mode = 'v' } }, opts = {} },
     { 'fedepujol/move.nvim', keys = km.move, opts = {} },
     { 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
     { 'numToStr/Comment.nvim', keys = km.comment, opts = {} },
@@ -228,10 +208,10 @@ return {
     { 'akinsho/toggleterm.nvim', keys = km.toggleterm, opts = { open_mapping = km.toggleterm } },
     { 'goolord/alpha-nvim', opts = require('kiro.config.alpha') },
     { 'stevearc/dressing.nvim', event = 'VeryLazy', opts = {} },
-    { 'folke/todo-comments.nvim', event = AUTOCMDTEST, opts = {} },
+    { 'folke/todo-comments.nvim', event = LazyBufEnter, opts = {} },
     {
         'akinsho/bufferline.nvim',
-        event = AUTOCMDTEST,
+        event = LazyBufEnter,
         keys = km.bufferline,
         opts = {
             options = {
@@ -257,7 +237,13 @@ return {
 
     -- language specific
     { 'mrcjkb/rustaceanvim', ft = 'rust' },
-    { 'folke/neodev.nvim', ft = 'lua', opts = {} },
+    { 'saecki/crates.nvim', event = 'BufRead Cargo.toml', opts = {} },
+    {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
+    },
+    { 'Bilal2453/luvit-meta', lazy = true },
     {
         'luckasRanarison/tailwind-tools.nvim',
         dependencies = 'nvim-treesitter/nvim-treesitter',
@@ -266,8 +252,18 @@ return {
     },
     {
         'razak17/tailwind-fold.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        dependencies = 'nvim-treesitter/nvim-treesitter',
         ft = { 'html', 'rust', 'svelte', 'astro', 'vue', 'typescriptreact', 'php', 'blade' },
         opts = { min_chars = 30 },
+    },
+    {
+        'k1rowashere/peek.nvim',
+        cmd = 'PeekOpen',
+        build = 'deno task --quiet build:fast',
+        opts = {},
+        init = function()
+            vim.api.nvim_create_user_command('PeekOpen', function() require('peek').open() end, {})
+            vim.api.nvim_create_user_command('PeekClose', function() require('peek').close() end, {})
+        end,
     },
 }
