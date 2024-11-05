@@ -39,8 +39,6 @@ M.formatters = {
     scss = { 'prettierd' },
     less = { 'prettierd' },
     markdown = { 'prettierd' },
-    vue = { 'prettierd' },
-    yaml = { 'prettierd' },
     python = { 'autopep8' },
 }
 

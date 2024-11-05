@@ -1,6 +1,12 @@
 return function()
     local lspconfig = require('lspconfig')
     local servers = {
+        somesass_ls = {},
+        html = { filetypes = { 'html', 'htmldjango' } },
+        htmx = {},
+        clangd = { cmd = { 'clangd', '--clang-tidy' } },
+        ts_ls = {},
+        emmet_ls = {},
         lua_ls = {
             settings = {
                 Lua = {
@@ -27,7 +33,7 @@ return function()
     vim.schedule(function()
         require('mason-lspconfig').setup_handlers({
             function(server_name)
-                local server = servers[server_name] or {}
+                local server = servers[server_name]
                 -- explicit disable
                 if not server then return end
 

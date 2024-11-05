@@ -1,6 +1,7 @@
 local km = require('kiro.keymaps')
 local utils = require('kiro.utils')
 local LazyBufEnter = 'User LazyBufEnter'
+vim.g.rustaceanvim = { tools = { hover_actions = { replace_builtin_hover = false } } }
 
 return {
     {
@@ -126,7 +127,7 @@ return {
         'neovim/nvim-lspconfig',
         dependencies = {
             { 'williamboman/mason-lspconfig.nvim' },
-            { 'williamboman/mason.nvim', opts = { ui = { border = 'rounded' } } },
+            { 'williamboman/mason.nvim', opts = { PATH = 'append', ui = { border = 'rounded' } } },
         },
         config = require('kiro.config.lsp'),
     },
@@ -241,7 +242,7 @@ return {
     {
         'folke/lazydev.nvim',
         ft = 'lua',
-        opts = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
+        config = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
     },
     { 'Bilal2453/luvit-meta', lazy = true },
     {

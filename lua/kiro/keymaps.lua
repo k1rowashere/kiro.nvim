@@ -11,10 +11,13 @@ local opts = function(opts)
     return vim.tbl_extend('keep', opts, default)
 end
 
+map('n', 'q:', '<nop>', opts('bad'))
+
 map('n', '<esc>', vim.cmd.noh)
 map({ 'i', 'n', 'v', 'x' }, '<C-c>', '<Esc>')
 map({ 'n', 'i' }, '<F1>', '<nop>')
 map('n', '<C-i>', '<C-I>')
+map({ 'i', 'c' }, '<C-H>', '<C-W>')
 
 map('t', '<esc><esc>', '<C-\\><C-n>', opts('Exit Terminal Mode'))
 map({ 'i', 't', 'c' }, '<C-BS>', '<C-w>', opts({ desc = 'Delete Previous Word', silent = false }))
@@ -71,7 +74,7 @@ M.bufferline = { { '<leader><leader>', '<cmd>BufferLinePick<cr>', desc = 'Pick B
 for i = 1, 9 do
     M.bufferline[i + 1] = {
         '<leader><leader>' .. i,
-        '<cmd>BufferLineGoToBuffer' .. i .. '<cr>',
+        '<cmd>lua require("bufferline").go_to(' .. i .. ', true)<cr>',
         desc = 'Goto Buffer (' .. i .. ')',
     }
 end
@@ -168,7 +171,7 @@ M.gitsigns = function(bufnr)
     map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<cr>')
 end
 
-M.toggleterm = '<C-;>'
+M.toggleterm = ''
 
 ---@param client vim.lsp.Client
 M.lsp = function(bufnr, client)
@@ -188,7 +191,7 @@ M.lsp = function(bufnr, client)
     map('n', '<f3>', function() require('conform').format({ bufnr = bufnr }) end, o('Format Document'))
 
     if client.supports_method('textDocument/inlayHint') then
-        local inlayToggle = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(bufnr)) end
+        local inlayToggle = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })) end
         map('n', 'gh', inlayToggle, o('Toggle Inlay Hints'))
     end
     if client.name == 'rust-analyzer' then map({ 'n', 'v' }, 'J', ':RustLsp joinLines<cr>', o('Join')) end
@@ -271,8 +274,8 @@ M.treesitter = {
 }
 
 M.trouble = {
-    { '<leader>td', '<cmd>TroubleToggle workspace_diagnostics<cr>', desc = 'Trouble Diagnostics' },
-    { '<leader>tt', '<cmd>TroubleToggle todo<cr>', desc = 'Trouble Todo' },
+    { '<leader>td', '<cmd>Trouble diagnostics toggle win.position=right<cr>', desc = 'Trouble Diagnostics' },
+    { '<leader>tt', '<cmd>Trouble todo toggle win.position=right<cr>', desc = 'Trouble Todo' },
 }
 
 M.vgit = {
