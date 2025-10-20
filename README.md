@@ -1,6 +1,6 @@
 # kiro.nvim
 
-My personal neovim (0.9.0+) config.
+My personal neovim (0.11.0+) config.
 Not intended for public use, use at your own risk.
 
 ## Installation

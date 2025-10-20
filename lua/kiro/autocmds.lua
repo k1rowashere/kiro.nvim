@@ -5,6 +5,15 @@ local autocmd = vim.api.nvim_create_autocmd
 
 local relnum = g('relativenumber_toggle')
 
+-- set tabwidth to 2 spaces for html files
+autocmd('FileType', {
+    pattern = { 'html', 'htmldjango' },
+    callback = function()
+        vim.opt_local.tabstop = 2
+        vim.opt_local.shiftwidth = 2
+    end,
+})
+
 -- set linewrap on big files (more than 100KB)
 autocmd('BufReadPre', {
     callback = function(ev)
@@ -21,10 +30,10 @@ autocmd('BufReadPre', {
 })
 
 -- Fix: starts the lsp after session is loaded
-autocmd({ 'SessionLoadPost', 'User' }, {
-    pattern = 'LazyBufEnter',
-    callback = vim.schedule_wrap(function() vim.cmd('LspStart') end),
-})
+-- autocmd({ 'SessionLoadPost', 'User' }, {
+--     pattern = 'LazyBufEnter',
+--     callback = vim.schedule_wrap(function() vim.cmd('LspStart') end),
+-- })
 
 -- Deffers the BufEnter Lazy command to the next idle time
 autocmd('BufEnter', {

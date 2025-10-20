@@ -16,15 +16,15 @@ map('n', 'q:', '<nop>', opts('bad'))
 map('n', '<esc>', vim.cmd.noh)
 map({ 'i', 'n', 'v', 'x' }, '<C-c>', '<Esc>')
 map({ 'n', 'i' }, '<F1>', '<nop>')
-map('n', '<C-i>', '<C-I>')
+map('n', '<C-u>', '<C-I>')
 map({ 'i', 'c' }, '<C-H>', '<C-W>')
 
 map('t', '<esc><esc>', '<C-\\><C-n>', opts('Exit Terminal Mode'))
 map({ 'i', 't', 'c' }, '<C-BS>', '<C-w>', opts({ desc = 'Delete Previous Word', silent = false }))
 map({ 'i' }, '<C-del>', '<C-o>dw', opts({ desc = 'Delete Next Word', silent = false }))
 
-map('n', '[d', vim.diagnostic.goto_prev, opts('Previous Diagnostic'))
-map('n', ']d', vim.diagnostic.goto_next, opts('Next Diagnostic'))
+map('n', '[d', function() vim.diagnostic.jump({ count = 1, float = true }) end, opts('Previous Diagnostic'))
+map('n', ']d', function() vim.diagnostic.jump({ count = -1, float = true }) end, opts('Next Diagnostic'))
 
 -- Register stuff
 map('x', '<leader>p', [["_dP]], opts('Paste Over'))
@@ -34,7 +34,7 @@ map({ 'n', 'v', 'x' }, '<leader>c', '"+', opts('System Clipboard'))
 -- Buffer & Tab Navigation
 -- if <leader> is held, then a tab will cycle through buffers
 local recently_used = false
-local timer = UV.new_timer()
+local timer = vim.uv.new_timer()
 
 local function do_cmd(cmd)
     if not timer then error('Failed to create timer') end
@@ -66,6 +66,7 @@ end, opts())
 map('n', '<leader>q', '<cmd>bd<cr>', opts('Close Buffer'))
 map('n', '<leader>Q', '<cmd>bd!<cr>', opts('Force Close Buffer'))
 map('n', '<leader>wq', '<cmd>w<cr><cmd>bd<CR>', opts('Write then Close Buffer'))
+map('n', '<leader>wn', '<cmd>noautocmd w<CR>', opts('Write Buffer Noautocmd'))
 
 -- TODO: Tab Navigation
 map('n', '<leader><leader><tab>', '<cmd>tabNext<cr>', opts('Next Tab'))
@@ -177,12 +178,12 @@ M.toggleterm = ''
 M.lsp = function(bufnr, client)
     local o = function(desc) return opts({ desc = desc, buffer = bufnr }) end
 
-    map('n', 'K', vim.lsp.buf.hover, o('Show Hover'))
+    map('n', 'K', function() vim.lsp.buf.hover({ border = 'rounded' }) end, o('Show Hover'))
     map('n', 'gd', '<cmd>Telescope lsp_definitions<cr>', o('Go to Definition'))
     map('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<cr>', o('Go to Type Definition'))
     map('n', 'gi', '<cmd>Telescope lsp_implementations<cr>', o('Go to Implementation'))
     map('n', '<C-k>', vim.diagnostic.open_float, o('Show Diagnostic'))
-    -- km('n', '<C-K>', vim.lsp.buf.signature_help, o('Show Signature Help'))
+    -- map('n', '<C-K>', function() vim.lsp.buf.signature_help({ border = 'rounded' }) end, o('Show Signature Help'))
     map('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, o('Add Workspace Folder'))
     map('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, o('Remove Workspace Folder'))
     map('n', '<F2>', vim.lsp.buf.rename, o('Rename Symbol'))
@@ -190,7 +191,7 @@ M.lsp = function(bufnr, client)
     map('n', 'gr', '<cmd>Telescope lsp_references<cr>', o('Show References'))
     map('n', '<f3>', function() require('conform').format({ bufnr = bufnr }) end, o('Format Document'))
 
-    if client.supports_method('textDocument/inlayHint') then
+    if client:supports_method('textDocument/inlayHint') then
         local inlayToggle = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })) end
         map('n', 'gh', inlayToggle, o('Toggle Inlay Hints'))
     end
@@ -212,32 +213,33 @@ M.neogit = { { '<leader>g', '<cmd>Neogit<cr>', desc = 'Toggle Neogit' } }
 
 M.oil = {
     global = {
-        { '<leader>e', '<cmd>Oil --float<cr>', desc = 'Toggle Oil Window' },
+        {
+            '<leader>e',
+            function() require('oil').open_float(nil, { preview = {} }) end,
+            desc = 'Open Oil Window',
+        },
         {
             '<leader>E',
-            function() require('oil').toggle_float(vim.cmd.pwd()) end,
-            desc = 'Toggle Oil Window in Working Directory',
+            function() require('oil').open_float(vim.cmd.pwd(), { preview = {} }) end,
+            desc = 'Open Oil Window in Working Directory',
         },
     },
     active = {
         ['q'] = 'actions.close',
         ['<leader>e'] = 'actions.close',
-        -- FIXME: this is a hack to get previews in floating windows
-        ['<C-p>'] = function()
-            local oil = require('oil')
-            if require('oil.util').is_floating_win() then
-                local dir = oil.get_current_dir()
-                oil.close()
-                oil.open(dir)
-            end
-            require('oil.actions').preview.callback()
-        end,
-        ['<C-;>'] = function()
-            UV.spawn('kitty', {
+        [';'] = function()
+            -- vim.uv.spawn('kitty', {
+            --     args = {
+            --         '@launch',
+            --         '--type=tab',
+            --         '--cwd=' .. require('oil').get_current_dir(),
+            --     },
+            -- })
+            vim.uv.spawn('konsole', {
                 args = {
-                    '@launch',
-                    '--type=tab',
-                    '--cwd=' .. require('oil').get_current_dir(),
+                    '--new-tab',
+                    '--workdir',
+                    require('oil').get_current_dir(),
                 },
             })
         end,
@@ -291,7 +293,7 @@ M.ufo = function()
         { 'zm', require('ufo').closeFoldsWith },
         { 'zR', require('ufo').openAllFolds },
         { 'zM', require('ufo').closeAllFolds },
-        { 'Z', require('ufo').peekFoldedLinesUnderCursor },
+        { '<C-z>', require('ufo').peekFoldedLinesUnderCursor },
     }
 end
 

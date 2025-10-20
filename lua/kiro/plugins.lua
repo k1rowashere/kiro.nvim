@@ -8,7 +8,11 @@ return {
         'catppuccin/nvim',
         name = 'catppuccin',
         priority = 1000,
-        opts = { transparent_background = true, integrations = { mason = true, diffview = true } },
+        opts = {
+            transparent_background = true,
+            float = { transparent = true },
+            auto_integrations = true,
+        },
         init = function() vim.cmd.colorscheme('catppuccin-mocha') end,
     },
     { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
@@ -36,6 +40,7 @@ return {
                 float = { padding = 5 },
                 columns = { 'icon', 'size' },
                 keymaps = km.oil.active,
+                preview = {},
             },
         },
         lazy = not vim.iter(vim.fn.argv()):any(vim.fn.isdirectory),
@@ -78,7 +83,7 @@ return {
             preview_config = { border = 'rounded' },
         },
     },
-    { -- only fot the fancy hunk diff view
+    { -- only for the fancy hunk diff view
         'tanvirtin/vgit.nvim',
         keys = km.vgit,
         opts = {
@@ -107,7 +112,7 @@ return {
             'HiPhish/rainbow-delimiters.nvim',
             main = 'rainbow-delimiters.setup',
             opts = {
-                disable = utils.is_big_file,
+                condition = utils.is_big_file,
                 highlight = vim.iter({ 'Red', 'Orange', 'Yellow', 'Green', 'Cyan', 'Blue', 'Violet' })
                     :map(function(c) return 'RainbowDelimiter' .. c end)
                     :totable(),
@@ -123,14 +128,8 @@ return {
     { 'kevinhwang91/nvim-hlslens', keys = { '/', '?' }, opts = {} },
 
     -- Lsp stuff
-    {
-        'neovim/nvim-lspconfig',
-        dependencies = {
-            { 'williamboman/mason-lspconfig.nvim' },
-            { 'williamboman/mason.nvim', opts = { PATH = 'append', ui = { border = 'rounded' } } },
-        },
-        config = require('kiro.config.lsp'),
-    },
+    { 'neovim/nvim-lspconfig' },
+    { 'williamboman/mason.nvim', opts = { PATH = 'append', ui = { border = 'rounded' } } },
     {
         'SmiteshP/nvim-navbuddy',
         dependencies = { 'SmiteshP/nvim-navic', 'MunifTanjim/nui.nvim' },
@@ -180,21 +179,21 @@ return {
             action_keys = { jump_close = { '<cr>' } },
         },
     },
-    { -- TODO: replace with ???
-        'Zeioth/compiler.nvim',
-        dependencies = {
-            'stevearc/overseer.nvim',
-            cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
-            keys = km.compiler,
-            opts = {
-                task_list = {
-                    direction = 'bottom',
-                    min_height = 25,
-                    max_height = 25,
-                    default_detail = 1,
-                },
+    {
+        'stevearc/overseer.nvim',
+        cmd = { 'OverseerRun', 'OverseerToggle', 'OverseerOpen', 'OverseerQuickAction' },
+        opts = {
+            task_list = {
+                direction = 'bottom',
+                min_height = 25,
+                max_height = 25,
+                default_detail = 1,
             },
         },
+    },
+    { -- TODO: replace with ???
+        'Zeioth/compiler.nvim',
+        keys = km.compiler,
         cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
         opts = {},
     },
@@ -214,23 +213,21 @@ return {
         'akinsho/bufferline.nvim',
         event = LazyBufEnter,
         keys = km.bufferline,
-        opts = {
-            options = {
-                separator_style = { '', '' },
-                indicator = { style = 'underline' },
-                diagnostics_indicator = function(count, _, _, _) return '(' .. count .. ')' end,
-                hover = { enabled = true, delay = 200, reveal = { 'close' } },
-                offsets = { { filetype = 'undotree', text = 'Undo Tree', text_align = 'left', separator = true } },
-                numbers = 'ordinal',
-                diagnostics = 'nvim_lsp',
-            },
-            highlights = function()
-                return vim.tbl_map(
-                    function(val) return vim.tbl_extend('keep', val, { sp = '#f2ad84' }) end,
-                    require('catppuccin.groups.integrations.bufferline').get()()
-                )
-            end,
-        },
+        after = 'catppuccin',
+        config = function()
+            require('bufferline').setup({
+                options = {
+                    separator_style = { '', '' },
+                    indicator = { style = 'underline' },
+                    diagnostics_indicator = function(count, _, _, _) return '(' .. count .. ')' end,
+                    hover = { enabled = true, delay = 100, reveal = { 'close' } },
+                    offsets = { { filetype = 'undotree', text = 'Undo Tree', text_align = 'left', separator = true } },
+                    numbers = 'ordinal',
+                    diagnostics = 'nvim_lsp',
+                },
+                highlights = require('catppuccin.groups.integrations.bufferline').get_theme(),
+            })
+        end,
     },
     { 'nvim-lualine/lualine.nvim', dependencies = 'arkav/lualine-lsp-progress', opts = require('kiro.config.lualine') },
     { 'folke/which-key.nvim', event = 'VeryLazy', opts = {} },
@@ -242,7 +239,7 @@ return {
     {
         'folke/lazydev.nvim',
         ft = 'lua',
-        config = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
+        opts = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
     },
     { 'Bilal2453/luvit-meta', lazy = true },
     {

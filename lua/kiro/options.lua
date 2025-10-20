@@ -1,3 +1,20 @@
+-- enable osc52 when $SSH_TTY is set
+if os.getenv('SSH_TTY') then
+    vim.g.clipboard = {
+        name = 'OSC 52',
+        copy = {
+            ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+            ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+        },
+        paste = {
+            ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+            ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+        },
+    }
+end
+-- disable rust string semantic highlight
+vim.api.nvim_set_hl(0, '@lsp.type.string.rust', {})
+
 -- Vim options
 vim.o.number = true
 vim.o.relativenumber = true
@@ -13,9 +30,7 @@ vim.o.smartcase = true
 -- fold options
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
--- vim.o.foldmethod = 'expr'
--- vim.o.foldtext = ''
--- vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.o.foldtext = ''
 vim.o.foldenable = true
 
 -- tab options

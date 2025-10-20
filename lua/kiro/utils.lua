@@ -7,28 +7,20 @@ vim.api.nvim_create_user_command('Redir', function(ctx)
     vim.opt_local.modified = false
 end, { nargs = '+', complete = 'command' })
 
-function M.which_python()
-    -- FIXME: Add support for Windows
-    local f = io.popen('env which python', 'r') or error("Fail to execute 'env which python'")
-    local s = f:read('*a') or error('Fail to read from io.popen result')
-    f:close()
-    return string.gsub(s, '%s+$', '')
-end
-
 function M.git_root()
     local dot_git_path = vim.fn.finddir('.git', '.;')
     return vim.fn.fnamemodify(dot_git_path, ':h')
 end
 
----@diagnostic disable-next-line: unused-local
-function M.is_big_file(lang, buf)
+function M.is_big_file(_, buf)
     local max_filesize = 1000 * 1024 -- 1 MB
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf or 0))
+    local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf or 0))
     if ok and stats and stats.size > max_filesize then return true end
 end
 
 M.formatters = {
     lua = { 'stylua' },
+    sql = { 'prettierd' },
     html = { 'prettierd' },
     json = { 'prettierd' },
     javascript = { 'prettierd' },
@@ -40,6 +32,9 @@ M.formatters = {
     less = { 'prettierd' },
     markdown = { 'prettierd' },
     python = { 'autopep8' },
+    htmldjango = { 'prettierd', 'prettier' },
+    jinja = { 'prettierd', 'prettier' },
+    yaml = { 'prettierd' },
 }
 
 return M
