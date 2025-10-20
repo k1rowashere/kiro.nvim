@@ -37,7 +37,7 @@ return {
                 delete_to_trash = true,
                 skip_confirm_for_simple_edits = true,
                 win_options = { signcolumn = 'auto:2' },
-                float = { padding = 5 },
+                float = { padding = 5, border = 'rounded' },
                 columns = { 'icon', 'size' },
                 keymaps = km.oil.active,
                 preview = {},
@@ -112,7 +112,6 @@ return {
             'HiPhish/rainbow-delimiters.nvim',
             main = 'rainbow-delimiters.setup',
             opts = {
-                condition = utils.is_big_file,
                 highlight = vim.iter({ 'Red', 'Orange', 'Yellow', 'Green', 'Cyan', 'Blue', 'Violet' })
                     :map(function(c) return 'RainbowDelimiter' .. c end)
                     :totable(),
@@ -225,7 +224,7 @@ return {
                     numbers = 'ordinal',
                     diagnostics = 'nvim_lsp',
                 },
-                highlights = require('catppuccin.groups.integrations.bufferline').get_theme(),
+                highlights = require('catppuccin.special.bufferline').get_theme(),
             })
         end,
     },
