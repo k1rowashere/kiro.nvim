@@ -107,7 +107,6 @@ return {
     },
     {
         'nvim-treesitter/nvim-treesitter',
-        main = 'nvim-treesitter.configs',
         dependencies = {
             'HiPhish/rainbow-delimiters.nvim',
             main = 'rainbow-delimiters.setup',
@@ -121,6 +120,7 @@ return {
             incremental_selection = { enable = true, keymaps = km.treesitter, disable = utils.is_big_file },
             highlight = { enable = true, disable = utils.is_big_file },
         },
+        build = ':TSUpdate',
     },
     { 'brenoprata10/nvim-highlight-colors', event = LazyBufEnter, opts = {} },
     { 'dstein64/nvim-scrollview', event = LazyBufEnter, main = 'scrollview.contrib.gitsigns', opts = {} },
