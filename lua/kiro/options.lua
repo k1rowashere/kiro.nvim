@@ -12,6 +12,15 @@ if os.getenv('SSH_TTY') then
         },
     }
 end
+
+if vim.fn.has('win32') == 1 then
+    vim.o.shell = 'pwsh'
+elseif vim.fn.executable('zsh') == 1 then
+    vim.o.shell = 'zsh'
+else
+    vim.o.shell = 'bash'
+end
+
 -- disable rust string semantic highlight
 vim.api.nvim_set_hl(0, '@lsp.type.string.rust', {})
 
